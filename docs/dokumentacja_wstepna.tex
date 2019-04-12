@@ -25,16 +25,23 @@
 	\begin{description}
 		\item[Interakcje między agentami]
 		Agent może otrzymywać oraz przekazywać informacje innym agentom.
-		Protokołem komunikacyjnym agentów jest język naturalny.
+		Protokołem komunikacyjnym agentów jest język naturalny, tj.
+		przekazanie informacji między agentami następuje poprzez rozmowę
+		w języku angielskim zakodowaną tekstowo.
 		\item[Stan agenta]
-		Agent przechowuje otrzymane od innych informacje.
-		Liczba tych informacji może być ograniczona,
-		ponadto wykrywane są informacje które agent już posiada albo sprzeczne z posiadanymi.\\
-		Ponadto dla każdej informacji oraz dla każdego połączonego agenta przechowywany jest poziom zaufania.
+		Stan agenta składa się z trzech elementów:
+		\begin{itemize}
+			\item {Informacje otrzymane od innych agentów - 
+			Liczba tych informacji może być ograniczona lub nie, co jest sterowane parametrem,
+			ponadto nie są duplikowane informacje które agent już posiada albo sprzeczne z posiadanymi.}
+			\item {Poziom zaufania do każdej posiadanej informacji}
+			\item {Poziom zaufania do każdego połączonego agenta}
+		\end{itemize}
 		\item[Model wiedzy]
+		Wiedza agenta opisuje w jaki sposób są modyfikowane otrzymane przez niego informacje.\\
+		Początkowa wiedza agenta nie zależy od jego stanu.
 		Otrzymane przez agenta informacje traktowane są jako jego dodatkowa wiedza,
-		nakładająca się na pewną wiedzę początkową. 
-		Od wiedzy zależy w jaki sposób zostaną przez agenta zmutowane informacje.\\
+		nakładająca się na pewną wiedzę początkową.\\
 		Wiedza reprezentowana jest przy użyciu n-gramów,
 		gdzie wiedza początkowa zostanie utworzona korzystając z pewnego korpusu,
 		a n-gramy wynikające ze stanu agenta uwzględniane są z pewną wagą.
@@ -44,6 +51,7 @@
 			\item{Maksymalna liczba przechowywanych informacji}
 			\item{Bazowy wpływ informacji na wiedzę}
 			\item{Parametry związane z modelem zaufania}
+			\item{Parametry związane z modyfikacją informacji}
 		\end{itemize}
 	\end{description}
 	\subsection{Model zaufania}
