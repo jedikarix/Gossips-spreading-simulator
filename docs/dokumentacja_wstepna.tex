@@ -7,6 +7,13 @@
 \usepackage{titling}
 \usepackage{graphicx}
 \usepackage{indentfirst}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
 \title{Projekt WEDT + SAG \\ Symulator rozchodzenia się plotek \\ Dokumentacja wstępna}
 \author{Karol Chęciński, Tomasz Gałecki, Jakub Łyskawa}
 \setlength{\droptitle}{-10em}
@@ -86,11 +93,30 @@
 	\end{itemize}
 	\subsection{Plotki}
 	\begin{description}
+	    %TODO: modyfikacja
 		\item{Modyfikacja}
-		\item{Przekazywanie}
+		
+	W podstawowym wariancie plotki będą przekazywane między agentami w sposób bezpośredni (jako przesłanie obiektu z treścią plotki i dodatkowymi parametrami, np. ID). W wariancie rozszerzonym taka bezpośrednia komunikacja zostałaby zastąpiona przez rozmowę botów, które po wymianie początkowych uprzejmości, wygłaszałyby plotkę. Ten scenariusz może zostać także rozbudowany o dodatkową reakcję bota, który słucha plotki (np. \textit{OK, ciekawe.}, \textit{Nie, nie wydaje mi się.} etc.) bazującą na poziomie zaufania do nowo odebranej plotki.
 	\end{description}
 	\subsection{Logowanie}
+	Każdy agent będzie prowadził własny dziennik zdarzeń. Każda akcja (odebranie plotki, wysłanie plotki, przeprowadzenie mutacji, zmiana poziomu zaufania, modyfikacja bazy wiedzy) będzie odnotowywana razem ze stemplem czasowym. Wszelkie operacje na plotkach będą również zawierały identyfikator plotki.
+	
+	Po przeprowadzeniu eksperymentu, pliki dzienników zostaną zebrane od wszystkich agentów. Następnie informacje z dzienników zostaną poddane scaleniu tak, aby wydzielić pełne ścieżki przepływu każdej z plotek.
 	\section{Technologie}
+	Projekt zostanie zaimplementowany w języku \textit{Python}. Wieloagentowość systemu zostanie zrealizowana za pomocą biblioteki \textit{multiprocessing}. Plotki pomiędzy agentami będą przesyłane za pomocą kolejek międzyprocesowych.
+	
+	Proces budowy grafu połączeń będzie zautomatyzowany. Graf będzie opisywany za pomocą plików tekstowych o formacie przystosowanym do przechowywania danych (np. \textit{YAML} lub \textit{JSON}).
+	
+	Każdy z agentów będzie reprezentowany przez obiekt klasy agenta; będzie posiadał własny zasób wiedzy (poprzednich plotek) jako listę. Baza wiedzy domyślnie będzie nielimitowana.
+	
+	Plotki będą przygotowywane na bazie artykułów z anglojęzycznych serwisów informacyjnych. Pełne teksty artykułów będą skracane do jednego/kilku zdań. Planujemy użyć do tego biblioteki \href{https://github.com/DerwenAI/pytextrank}{pytextrank} i/lub \href{https://pypi.org/project/gensim/}{gensim}.
+	
+	Powiązanie semantyczne będzie wyliczane przy pomocy \textit{word2vec}, np. z biblioteki \href{https://pypi.org/project/gensim/}{gensim}.
+	
+	Logi w systemie będą zbierane za pomocą biblioteki \href{https://docs.python.org/3/library/logging.html#module-logging}{logging}.
+	
+	Jeśli chatbot zostanie użyty do przeprowadzania konwersacji, zostanie użyta biblioteka \href{https://chatterbot.readthedocs.io/en/stable/}{chatterbot}.
+	
 	\section{Przykładowe eksperymenty}
 	\section{Zadania/podział zadań}
 \end{document}
