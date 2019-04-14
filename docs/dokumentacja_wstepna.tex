@@ -20,16 +20,17 @@
 \begin{document}
 	\maketitle
 	\section{Opis projektu}
-		Projekt polega na utworzeniu symulatora rozchodzenia się plotek. Stosując uproszczony model kontaktów międzyludzkich oparty o sieć agentów porozumiewających się ze sobą, chcemy zbadać w jaki sposób rozprzestrzeniają się informacje w społecznościach. Agenty czerpią informacje z artykułów znalezionych w serwisach informacyjnych. Wybrane informacje przekazują dalej, do swoich sąsiadów w sieci połączeń. Zadaniem agenta po otrzymaniu plotki i przed rozpropagowaniem jej będzie ocena wiarygodności informacji. W czasie propagacji plotki istnieć będzie niewielka szansa, że informacja w niej zawarta zostanie zniekształcona. Model uwzględniać będzie także poziom zaufania między poszczególnymi agentami.
+		Projekt polega na utworzeniu symulatora rozchodzenia się plotek. Stosując uproszczony model kontaktów międzyludzkich oparty o sieć agentów porozumiewających się ze sobą, chcemy zbadać w jaki sposób rozprzestrzeniają się informacje w społecznościach. Agenty czerpią informacje z artykułów znalezionych w serwisach informacyjnych. Wybrane informacje przekazują dalej, do swoich sąsiadów w sieci połączeń. 
+		By symulacja nie opierała się wyłącznie na powielaniu i propagowaniu otrzymywanych wiadomości, model zostanie wzbogacony o dodatkowe mechanizmy. Po pierwsze, do zadań agenta będzie należeć także ocena wiarygodności informacji. Otrzymanie informacji sprzecznej lub zgodnej z przekonaniami agenta będzie odpowiednio obniżać lub podnosić zaufanie do agenta, który daną informację dostarczył. W czasie propagacji plotki istnieć będzie niewielka szansa, że informacja w niej zawarta zostanie zniekształcona.
 	\section{Opis modelu}
 	\subsection{Graf połączeń}
 		Model symulacji można przedstawić za pomocą grafu, w którym wierzchołki reprezentują poszczególnych agentów. Krawędzie łączą agentów, którzy się ,,znają'', czyli mogą przekazywać między sobą informacje. Taki graf można rozpatrywać jako graf ważony i skierowany, gdy waga krawędzi z wierzchołka $v_A$, a $v_B$ reprezentuje zaufanie agenta A do agenta B.
 		W projekcie chcemy uwzględnić grafy predefiniowane oraz generowane losowo. Przykładowe opisy topologii:
 		\begin{description}
 		\item[Podzbiór grafu pełnego]
-		Z grafu pełnego o $n$ wierzchołkach losowane jest $c|E|$ krawędzi. Taki graf ma względnie regularną strukturę.
+		Z grafu pełnego o $n$ wierzchołkach losowane jest $c\frac{n(n-1)}{2}, c \in [\frac{2}{n}, 1]$ krawędzi tak, by był spójny. Taki graf ma względnie regularną strukturę.
 		\item[Grafy połączone mostami]
-		Graf zbudowany jest z kilku grup - grafów opisanych w punkcie wyżej, przy czym dodatkowo połączone są losowo pary wierzchołków z różnych grup. Topologii takiej można użyć do zbadania, jak między grupami rozchodzić się będą informacje pochodzące z różnych źródeł, oraz jak kształtować się będzie zaufanie między członkami różnych grup.
+		Graf zbudowany jest z kilku grup - grafów opisanych w punkcie wyżej, przy czym dodatkowo połączone są losowe pary wierzchołków z różnych grup. Topologii takiej można użyć do zbadania, jak między grupami rozchodzić się będą informacje pochodzące z różnych źródeł, oraz jak kształtować się będzie zaufanie między członkami różnych grup.
 		\end{description}
 	\subsection{Charakterystyka agenta}
 	Każdy węzeł w grafie połączeń reprezentuje agenta.
