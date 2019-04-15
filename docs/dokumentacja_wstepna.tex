@@ -21,7 +21,7 @@
 	\maketitle
 	\section{Opis projektu}
 		Projekt polega na utworzeniu symulatora rozchodzenia się plotek. Stosując uproszczony model kontaktów międzyludzkich oparty o sieć agentów porozumiewających się ze sobą, chcemy zbadać w jaki sposób rozprzestrzeniają się informacje w społecznościach. Agenty czerpią informacje z artykułów znalezionych w serwisach informacyjnych. Wybrane informacje przekazują dalej, do swoich sąsiadów w sieci połączeń. 
-		By symulacja nie opierała się wyłącznie na powielaniu i propagowaniu otrzymywanych wiadomości, model zostanie wzbogacony o dodatkowe mechanizmy. Po pierwsze, do zadań agenta będzie należeć także ocena wiarygodności informacji. Otrzymanie informacji sprzecznej lub zgodnej z przekonaniami agenta będzie odpowiednio obniżać lub podnosić zaufanie do agenta, który daną informację dostarczył. W czasie propagacji plotki istnieć będzie niewielka szansa, że informacja w niej zawarta zostanie zniekształcona.
+		By symulacja nie opierała się wyłącznie na powielaniu i propagowaniu otrzymywanych wiadomości, model zostanie wzbogacony o dodatkowe mechanizmy. Po pierwsze, do zadań agenta będzie należeć także ocena wiarygodności informacji. Otrzymanie informacji sprzecznej lub zgodnej z przekonaniami agenta będzie odpowiednio obniżać lub podnosić zaufanie do agenta, który daną informację dostarczył. W czasie propagacji plotki istnieć będzie niewielka szansa, że informacja w niej zawarta zostanie zniekształcona. 
 	\section{Opis modelu}
 	\subsection{Graf połączeń}
 		Model symulacji można przedstawić za pomocą grafu, w którym wierzchołki reprezentują poszczególnych agentów. Krawędzie łączą agentów, którzy się ,,znają'', czyli mogą przekazywać między sobą informacje. Taki graf można rozpatrywać jako graf ważony i skierowany, gdy waga krawędzi z wierzchołka $v_A$, a $v_B$ reprezentuje zaufanie agenta A do agenta B.
@@ -48,7 +48,7 @@
 			ponadto nie są duplikowane informacje które agent już posiada albo sprzeczne z posiadanymi.}
 			\item {Poziom zaufania do każdej posiadanej informacji}
 			\item {Poziom zaufania do każdego połączonego agenta}
-		\end{itemize}
+		\end{itemize}	
 		\item[Model wiedzy]
 		Wiedza agenta opisuje w jaki sposób są modyfikowane otrzymane przez niego informacje.\\
 		Początkowa wiedza agenta nie zależy od jego stanu.
@@ -119,6 +119,12 @@
 	Jeśli chatbot zostanie użyty do przeprowadzania konwersacji, zostanie użyta biblioteka \href{https://chatterbot.readthedocs.io/en/stable/}{chatterbot}.
 	
 	\section{Przykładowe eksperymenty}
+	Zaproponowany kształt symulacji umożliwia zbadanie wielu interesujacych zjawisk. Poniżej opisane zostały propozycje eksperymentów.
+	\begin{itemize}
+	\item Badanie w jaki sposób rozpowszechnianie fałszywych plotek przez pojedynczego agenta wpłynie na zaufanie do niego
+	\item Kształtowanie zaufania między grupami agentów korzystających z tego samego lub różnych źródeł informacji
+	\item Badanie pojawiania się w sieci sprzecznych informacji mimo korzystania z tego samego źródła danych w zależności od parametrów mutacji plotek.
+	\end{itemize}
 	\section{Zadania/podział zadań}
 \end{document}
 
