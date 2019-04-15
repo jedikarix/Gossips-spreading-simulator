@@ -51,13 +51,7 @@ w języku angielskim.
 			\item {Poziom zaufania do każdego połączonego agenta}
 		\end{itemize}	
 		\item[Model wiedzy]
-		Wiedza agenta opisuje w jaki sposób są modyfikowane otrzymane przez niego informacje.\\
-		Początkowa wiedza agenta nie zależy od jego stanu.
-		Otrzymane przez agenta informacje traktowane są jako jego dodatkowa wiedza,
-		nakładająca się na pewną wiedzę początkową.\\
-		Wiedza reprezentowana jest przy użyciu n-gramów,
-		gdzie wiedza początkowa zostanie utworzona korzystając z pewnego korpusu,
-		a n-gramy wynikające ze stanu agenta uwzględniane są z pewną wagą.
+		Wiedza agenta implikuje sposób reakcji agenta na otrzymywane informacje. Na wiedzę składają się otrzymane do tej pory plotki (w postaci tekstu lub embeddingów zdań) wraz z poziomem zaufania do nich. Proponowany sposób modyfikacji wiedzy został opisany dokładniej w punkcie \textbf{2.3 - Model zaufania}. Wiedza agenta może również wpływać na sposób modyfikacji otrzymywanych plotek, jeśli zostanie zastosowany wersja z subiektywną modyfikcją opisana w punkcie \textbf{2.4 - Plotki}.
 		\item[Parametry agenta] Każdy agent może być niezależnie parametryzowany następującymi wartościami:
 		\begin{itemize}
 			\item{Bazowe prawdopodobieństwo przekazania dalej otrzymanej informacji}
