@@ -28,9 +28,10 @@
 		W projekcie chcemy uwzględnić grafy predefiniowane oraz generowane losowo. Przykładowe opisy topologii:
 		\begin{description}
 		\item[Podzbiór grafu pełnego]
-		Z grafu pełnego o $n$ wierzchołkach losowane jest $c\frac{n(n-1)}{2}, c \in [\frac{2}{n}, 1]$ krawędzi tak, by był spójny. Taki graf ma względnie regularną strukturę.
+		Z grafu pełnego o $n$ wierzchołkach losowane jest $c\frac{n(n-1)}{2}, c \in [\frac{2}{n}, 1]$ krawędzi tak, by był spójny. Taki graf ma względnie regularną strukturę. W skrajnym przypadku, gdy $c = \frac{2}{n}$ zostanie wygenerowane drzewo, które również może być interesującym przypadkiem do analizy.
 		\item[Grafy połączone mostami]
 		Graf zbudowany jest z kilku grup - grafów opisanych w punkcie wyżej, przy czym dodatkowo połączone są losowe pary wierzchołków z różnych grup. Topologii tego typu można użyć do zbadania, jak między grupami rozchodzić się będą informacje pochodzące z różnych źródeł, oraz jak kształtować się będzie zaufanie między członkami różnych grup.
+		\item [Cykl] o długości $n$.
 		\end{description}
 	\subsection{Charakterystyka agenta}
 	Każdy węzeł w grafie połączeń reprezentuje agenta.
@@ -50,13 +51,7 @@ w języku angielskim.
 			\item {Poziom zaufania do każdego połączonego agenta}
 		\end{itemize}	
 		\item[Model wiedzy]
-		Wiedza agenta opisuje w jaki sposób są modyfikowane otrzymane przez niego informacje.\\
-		Początkowa wiedza agenta nie zależy od jego stanu.
-		Otrzymane przez agenta informacje traktowane są jako jego dodatkowa wiedza,
-		nakładająca się na pewną wiedzę początkową.\\
-		Wiedza reprezentowana jest przy użyciu n-gramów,
-		gdzie wiedza początkowa zostanie utworzona korzystając z pewnego korpusu,
-		a n-gramy wynikające ze stanu agenta uwzględniane są z pewną wagą.
+		Wiedza agenta implikuje sposób reakcji agenta na otrzymywane informacje. Na wiedzę składają się otrzymane do tej pory plotki (w postaci tekstu lub embeddingów zdań) wraz z poziomem zaufania do nich. Proponowany sposób modyfikacji wiedzy został opisany dokładniej w punkcie \textbf{2.3 - Model zaufania}. Wiedza agenta może również wpływać na sposób modyfikacji otrzymywanych plotek, jeśli zostanie zastosowany wersja z subiektywną modyfikcją opisana w punkcie \textbf{2.4 - Plotki}.
 		\item[Parametry agenta] Każdy agent może być niezależnie parametryzowany następującymi wartościami:
 		\begin{itemize}
 			\item{Bazowe prawdopodobieństwo przekazania dalej otrzymanej informacji}
@@ -106,14 +101,14 @@ w języku angielskim.
 	Każdy agent będzie prowadził własny dziennik zdarzeń. Każda akcja (odebranie plotki, wysłanie plotki, przeprowadzenie mutacji, zmiana poziomu zaufania, modyfikacja bazy wiedzy) będzie odnotowywana razem ze stemplem czasowym. Wszelkie operacje na plotkach będą również zawierały identyfikator plotki.
 	
 	Po przeprowadzeniu eksperymentu, pliki dzienników zostaną zebrane od wszystkich agentów. Następnie informacje z dzienników zostaną poddane scaleniu tak, aby wydzielić pełne ścieżki przepływu każdej z plotek.
-	\section{Technologie}
+	\section{Kwestie techniczne}
 	Projekt zostanie zaimplementowany w języku \textit{Python}. Wieloagentowość systemu zostanie zrealizowana za pomocą biblioteki \textit{multiprocessing}. Plotki pomiędzy agentami będą przesyłane za pomocą kolejek międzyprocesowych.
 	
 	Proces budowy grafu połączeń będzie zautomatyzowany. Graf będzie opisywany za pomocą plików tekstowych o formacie przystosowanym do przechowywania danych (np. \textit{YAML} lub \textit{JSON}).
 	
 	Każdy z agentów będzie reprezentowany przez obiekt klasy agenta; będzie posiadał własny zasób wiedzy (poprzednich plotek) jako listę. Baza wiedzy domyślnie będzie nielimitowana.
 	
-	Plotki będą przygotowywane na bazie artykułów z anglojęzycznych serwisów informacyjnych. Pełne teksty artykułów będą skracane do jednego/kilku zdań. Planujemy użyć do tego biblioteki \href{https://github.com/DerwenAI/pytextrank}{pytextrank} i/lub \href{https://pypi.org/project/gensim/}{gensim}.
+	Plotki będą przygotowywane na bazie artykułów z anglojęzycznych serwisów informacyjnych. Pełne teksty artykułów będą skracane do jednego/kilku zdań. Planujemy użyć do tego biblioteki \href{https://github.com/DerwenAI/pytextrank}{pytextrank} i/lub \href{https://pypi.org/project/gensim/}{gensim}. Artykuły pobierane będą przy użyciu biblioteki \href{https://newspaper.readthedocs.io/}{newspaper}.
 	
 	Powiązanie semantyczne będzie wyliczane przy pomocy narzędzia \href{http://nlpprogress.com/english/semantic_textual_similarity.html}{SentEval}.
 	
