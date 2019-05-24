@@ -51,7 +51,7 @@ w języku angielskim.
 			\item {Poziom zaufania do każdego połączonego agenta}
 		\end{itemize}	
 		\item[Model wiedzy]
-		Wiedza agenta implikuje sposób reakcji agenta na otrzymywane informacje. Na wiedzę składają się otrzymane do tej pory plotki (w postaci tekstu lub embeddingów zdań) wraz z poziomem zaufania do nich. Proponowany sposób modyfikacji wiedzy został opisany dokładniej w punkcie \textbf{2.3 - Model zaufania}. Wiedza agenta może również wpływać na sposób modyfikacji otrzymywanych plotek, jeśli zostanie zastosowany wersja z subiektywną modyfikcją opisana w punkcie \textbf{2.4 - Plotki}.
+		Wiedza agenta implikuje sposób reakcji agenta na otrzymywane informacje. Na wiedzę składają się otrzymane do tej pory plotki (w postaci tekstu lub embeddingów zdań) wraz z poziomem zaufania do nich. Proponowany sposób modyfikacji wiedzy został opisany dokładniej w punkcie \textbf{2.3 - Model zaufania}. Wiedza agenta może również wpływać na sposób modyfikacji otrzymywanych plotek, jeśli zostanie zastosowana wersja z subiektywną modyfikcją opisana w punkcie \textbf{2.4 - Plotki}.
 		\item[Parametry agenta] Każdy agent może być niezależnie parametryzowany następującymi wartościami:
 		\begin{itemize}
 			\item{Bazowe prawdopodobieństwo przekazania dalej otrzymanej informacji}
@@ -95,7 +95,7 @@ w języku angielskim.
 		Modyfikacja na płaszczyźnie semantycznej polega na podmianie wybranych słów na takie, które pojawiają się w podobnych kontekstach. W tym przypadku mutacja oparta jest o model języka np. w postaci n-gramów. W najprostszym wariancie model języka może być globalny, w bardziej złożonym w pewnym stopniu zależny od wiedzy agenta. W ten sposób można byłoby uzyskać pewne tendencyjne modyfikacje.
 		W projekcie mamy zamiar skupić się na jednym z zaproponowanych wariantów modyfikacji plotek.
 		\item[Schemat komunikacji]
-	W podstawowym wariancie plotki będą przekazywane między agentami w sposób bezpośredni (jako przesłanie obiektu z treścią plotki i dodatkowymi parametrami, np. ID). W wariancie rozszerzonym taka bezpośrednia komunikacja zostałaby zastąpiona przez rozmowę botów, które po wymianie początkowych uprzejmości, wygłaszałyby plotkę. Ten scenariusz może zostać także rozbudowany o dodatkową reakcję bota, który słucha plotki (np. \textit{OK, ciekawe.}, \textit{Nie, nie wydaje mi się.}, \textit{Tak, słyszałem o tym} etc.) bazującą na poziomie zaufania do nowo odebranej plotki.
+	W podstawowym wariancie plotki będą przekazywane między agentami w sposób bezpośredni (jako przesłanie obiektu z treścią plotki i dodatkowymi parametrami, np. ID). W wariancie rozszerzonym taka bezpośrednia komunikacja zostałaby zastąpiona przez rozmowę botów, które po wymianie początkowych uprzejmości, wygłaszałyby plotkę. Ten scenariusz może zostać także rozbudowany o dodatkową reakcję bota, który słucha plotki (np. \textit{OK, ciekawe.}, \textit{Nie, nie wydaje mi się.}, \textit{Tak, słyszałem o tym} etc.) bazującą na poziomie zaufania do nowo odebranej plotki. Na podstawie infromacji zwrotnej nadawca mógłby skorygować swoje zaufanie do rozpowszechnianej informacji.
 	\end{description}
 	\subsection{Logowanie}
 	Każdy agent będzie prowadził własny dziennik zdarzeń. Każda akcja (odebranie plotki, wysłanie plotki, przeprowadzenie mutacji, zmiana poziomu zaufania, modyfikacja bazy wiedzy) będzie odnotowywana razem ze stemplem czasowym. Wszelkie operacje na plotkach będą również zawierały identyfikator plotki.
