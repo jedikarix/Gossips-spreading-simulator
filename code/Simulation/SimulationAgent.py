@@ -5,6 +5,8 @@ from spade.agent import Agent
 from spade.behaviour import CyclicBehaviour
 from spade.message import Message
 
+from Simulation.Knowledge import Knowledge, KnowledgeInformation
+
 
 def prepare_gossip_message(receiver, gossip):
     msg = Message(to=receiver)
@@ -18,8 +20,10 @@ class SimulationAgent(Agent):
         async def run(self):
             if len(self.agent.neighbours) == 0:
                 await asyncio.sleep(100)
+
+            information = self.agent.knowledge.get_random_information()
             receiver = sample(self.agent.neighbours, 1)[0]
-            message = prepare_gossip_message(receiver, "pst")
+            message = prepare_gossip_message(receiver, information.body)
             await self.send(message)
             print("{}: I send message to {}".format(self.agent.jid, receiver))
             await asyncio.sleep(randint(3, 10))
@@ -28,6 +32,7 @@ class SimulationAgent(Agent):
         async def run(self):
             msg = await self.receive(timeout=10)
             if msg:
+                self.agent.knowledge.add_message(msg)
                 print("{}: I received message \"{}\" from {}".format(self.agent.jid, msg.body, msg.sender))
             else:
                 print("{}: I did not received any message".format(self.agent.jid))
@@ -39,6 +44,7 @@ class SimulationAgent(Agent):
         self.neighbours = neighbours
         self.propagate_behav = None
         self.listen_behav = None
+        self.knowledge = Knowledge()
 
     async def setup(self):
         print("hello, i'm {}. My neighbours: {}".format(self.jid, self.neighbours))
