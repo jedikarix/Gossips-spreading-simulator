@@ -2,6 +2,8 @@ from typing import Tuple, Union
 
 import networkx as nx
 
+from Simulation.InformationSource import InformationSource
+
 
 class SimulationGraph(nx.DiGraph):
 
@@ -28,6 +30,12 @@ class SimulationGraph(nx.DiGraph):
         u_trust, v_trust = trust if isinstance(trust, tuple) else (trust, trust)
         self.add_edge(u, v, u_trust)
         self.add_edge(v, u, v_trust)
+
+    def set_information_source(self, u: int, source: InformationSource):
+        self.nodes[u]['source'] = source
+
+    def get_information_sources(self):
+        return nx.get_node_attributes(self, "source")
 
 
 def read_simulation_graph(filename):

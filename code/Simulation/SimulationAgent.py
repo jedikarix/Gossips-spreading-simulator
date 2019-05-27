@@ -6,6 +6,7 @@ from spade.behaviour import CyclicBehaviour
 from spade.message import Message
 
 from Simulation.Knowledge import Knowledge, KnowledgeInformation
+from Simulation.InformationSource import InformationSource
 
 
 def prepare_gossip_message(receiver, gossip):
@@ -22,10 +23,12 @@ class SimulationAgent(Agent):
                 await asyncio.sleep(100)
 
             information = self.agent.knowledge.get_random_information()
-            receiver = sample(self.agent.neighbours, 1)[0]
-            message = prepare_gossip_message(receiver, information.body)
-            await self.send(message)
-            print("{}: I send message to {}".format(self.agent.jid, receiver))
+
+            if information is not None:
+                receiver = sample(self.agent.neighbours, 1)[0]
+                message = prepare_gossip_message(receiver, information.body)
+                await self.send(message)
+                print("{}: I send message to {}".format(self.agent.jid, receiver))
             await asyncio.sleep(randint(3, 10))
 
     class ReceiveGossipBehaviour(CyclicBehaviour):
@@ -37,13 +40,15 @@ class SimulationAgent(Agent):
             else:
                 print("{}: I did not received any message".format(self.agent.jid))
 
-    def __init__(self, jid, password, verify_security=False, neighbours=None):
+    def __init__(self, jid, password, verify_security=False,
+                 neighbours=None, information_source: InformationSource = None):
         super().__init__(jid=jid, password=password, verify_security=verify_security)
         if neighbours is None:
             neighbours = list()
         self.neighbours = neighbours
         self.propagate_behav = None
         self.listen_behav = None
+        self.information_source = information_source
         self.knowledge = Knowledge()
 
     async def setup(self):
@@ -53,3 +58,16 @@ class SimulationAgent(Agent):
 
         self.add_behaviour(self.propagate_behav)
         self.add_behaviour(self.listen_behav)
+
+        if self.information_source is not None:
+            self.read_source()
+
+    def read_source(self, k=1):
+        if self.information_source is None:
+            return
+        else:
+            for i in range(k):
+                for information in self.information_source.get_information():
+                    print(self.jid, information)
+                    self.knowledge.add_information(information)
+

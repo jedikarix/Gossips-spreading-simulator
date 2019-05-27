@@ -1,5 +1,6 @@
 from math import exp
 from random import random
+from typing import Union
 
 from numpy.random import choice
 from spade.message import Message
@@ -36,11 +37,13 @@ class Knowledge:
         """
         self.informations.append(information)
 
-    def get_random_information(self) -> KnowledgeInformation:
+    def get_random_information(self) -> Union[KnowledgeInformation, None]:
         """
         Get random information from knowledge, where probability of draw is proportional to trust.
         :return: Drawn information
         """
+        if len(self.informations) == 0:
+            return None
         reliable_informations = [information for information in self.informations if information.trust > 0]
         trust_exps = [exp(information.trust) for information in reliable_informations]
         sum_trust_exp = sum(trust_exps)
