@@ -1,3 +1,5 @@
+networkx
+spade
 nltk
 torch
 scikit-learn
