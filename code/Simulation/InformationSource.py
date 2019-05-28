@@ -8,8 +8,10 @@ from Simulation.Knowledge import KnowledgeInformation
 class InformationSource:
 
     def __init__(self, url: str, articles_limit=100, summary_sentences=5):
+        config = newspaper.Config()
+        config.MAX_SUMMARY_SENT = summary_sentences
 
-        self.paper = newspaper.build(url)
+        self.paper = newspaper.build(url, config=config)
         self.articles = [article for article in self.paper.articles[:min(len(self.paper.articles), articles_limit)]]
         self.summaries = list()
         for article in self.articles:
