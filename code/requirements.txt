@@ -4,3 +4,6 @@ scikit-learn
 h5py
 numpy
 requests
+matplotlib
+pygraphviz
+opencv-python
