@@ -53,7 +53,7 @@ class SemanticAnalyser(object):
 
         entailment = np.argmax(output, axis=1)
 
-        level = (np.max(output, axis=1) != 1) - np.transpose(output)[1]
+        level = np.max(output, axis=1) - np.transpose(output)[1]
 
         return entailment, level
 
