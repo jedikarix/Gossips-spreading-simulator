@@ -52,8 +52,8 @@ class SemanticAnalyser(object):
         self.__mutex.release()
 
         entailment = np.argmax(output, axis=1)
-        softmax = np.exp(output) / np.transpose(np.repeat([np.sum(np.exp(output), axis=1)], 3, axis=0))
-        level = np.max((np.argmax(output, axis=1) != 1) * softmax, axis=1)
+
+        level = (np.max(output, axis=1) != 1) - np.transpose(output)[1]
 
         return entailment, level
 
