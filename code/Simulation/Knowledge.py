@@ -42,9 +42,9 @@ class Knowledge:
         Get random information from knowledge, where probability of draw is proportional to trust.
         :return: Drawn information
         """
-        if len(self.informations) == 0:
-            return None
         reliable_informations = [information for information in self.informations if information.trust > 0]
+        if len(reliable_informations) == 0:
+            return None
         trust_exps = [exp(information.trust) for information in reliable_informations]
         sum_trust_exp = sum(trust_exps)
         return choice(reliable_informations, p=[trust_exp/sum_trust_exp for trust_exp in trust_exps])
