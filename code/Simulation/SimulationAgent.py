@@ -49,7 +49,10 @@ class SimulationAgent(Agent):
         self.propagate_behav = None
         self.listen_behav = None
         self.information_source = information_source
-        self.knowledge = Knowledge()
+        self.knowledge = Knowledge(trust_change_callback=self.trust_changed_callback)
+
+    def trust_changed_callback(self, sender, trust):
+        print("trust change: ({}, {}): {}".format(sender, self.jid, trust))
 
     async def setup(self):
         print("hello, i'm {}. My neighbours: {}".format(self.jid, self.neighbours))
