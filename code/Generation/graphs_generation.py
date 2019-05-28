@@ -22,7 +22,13 @@ def add_random_sources(G, sources, sources_prob):
             G.set_information_source(node, source)
 
 
-def connected_gnp_graph(n, completion=0.5, sources=None, sources_prob=None):
+def connected_gnp_graph(n: int, completion: float = 0.5) -> SimulationGraph:
+    """
+    Generates a random simulation graph with n nodes, where every edge from complete graph is added with givem probability
+    :param n: number of nodes
+    :param completion: edge creation probability
+    :return: generated SimulationGraph
+    """
     G = nx.fast_gnp_random_graph(n, completion)
     components = [list(component) for component in nx.connected_components(G)]
 
@@ -30,12 +36,7 @@ def connected_gnp_graph(n, completion=0.5, sources=None, sources_prob=None):
         e = (choice(comp_a), choice(comp_b))
         G.add_edge(*e)
 
-    G = SimulationGraph(G)
-
-    if sources is not None and sources_prob is not None:
-        add_random_sources(G, sources, sources_prob)
-
-    return G
+    return SimulationGraph(G)
 
 
 def barabasi_albert_graph(n: int, m: int) -> SimulationGraph:
