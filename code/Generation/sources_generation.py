@@ -8,7 +8,7 @@ from Simulation.InformationSource import InformationSource
 
 def add_random_sources(G: SimulationGraph,
                        sources: Union[List[InformationSource], InformationSource],
-                       sources_prob: Union[List[float], float]) -> SimulationGraph:
+                       sources_prob: Union[List[float], float], nodes: None) -> SimulationGraph:
     """
     Adds random sources from given list with given probabilities.
     If probabilities don't sum to 1 there will be probability (1 - sum) for no assigning any source.
@@ -16,6 +16,7 @@ def add_random_sources(G: SimulationGraph,
     :param sources: List of information sources or single information source
     :param sources_prob: List of probabilities for every source in sources or single probability for every source.
     Sum of sources must be between 0 and 1.
+    :param nodes: subset of G nodes to set source (optional)
     :return: SimulationGraph with assigned information sources
     """
     if not isinstance(sources, list):
@@ -33,7 +34,10 @@ def add_random_sources(G: SimulationGraph,
     sources.append(None)
     sources_prob.append(none_prob)
 
-    for node in G.nodes():
+    if nodes is None:
+        nodes = G.nodes()
+
+    for node in nodes:
         source = np.random.choice(sources, p=sources_prob)
         if source is not None:
             G.set_information_source(node, source)
