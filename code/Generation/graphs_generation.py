@@ -38,3 +38,13 @@ def connected_gnp_graph(n, completion=0.5, sources=None, sources_prob=None):
     return G
 
 
+def barabasi_albert_graph(n: int, m: int) -> SimulationGraph:
+    """
+    Generates a random simulation graph according to the Barabási–Albert preferential attachment model
+    :param n: number of nodes
+    :param m: number of edges to attach from new node to existing node
+    :return: Generated SimulationGraph
+    """
+    return SimulationGraph(nx.barabasi_albert_graph(n, m))
+
+
