@@ -11,11 +11,15 @@ class InformationSource:
         config = newspaper.Config()
         config.MAX_SUMMARY_SENT = summary_sentences
         config.memoize_articles = False
+        config.fetch_images = False
 
         self.paper = newspaper.build(url, config=config)
-        self.articles = [article for article in self.paper.articles[:min(len(self.paper.articles), articles_limit)]]
         self.summaries = list()
-        for article in self.articles:
+
+        i = 0
+        while len(self.summaries) < articles_limit and i < len(self.paper.articles):
+            article = self.paper.articles[i]
+            i += 1
             try:
                 article.download()
                 article.parse()
@@ -23,7 +27,7 @@ class InformationSource:
             except newspaper.article.ArticleException:
                 continue
             if article.summary != str():
-                self.summaries.append(article.summary.split('\n')[-1])
+                self.summaries.append(article.summary.split('\n'))
 
     def get_information(self, trust=1):
         return [KnowledgeInformation(sentence, trust) for sentence in choice(self.summaries)]
