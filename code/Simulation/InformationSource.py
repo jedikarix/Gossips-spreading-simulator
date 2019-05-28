@@ -10,6 +10,7 @@ class InformationSource:
     def __init__(self, url: str, articles_limit=100, summary_sentences=5):
         config = newspaper.Config()
         config.MAX_SUMMARY_SENT = summary_sentences
+        config.memoize_articles = False
 
         self.paper = newspaper.build(url, config=config)
         self.articles = [article for article in self.paper.articles[:min(len(self.paper.articles), articles_limit)]]
