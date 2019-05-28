@@ -1,2 +1,8 @@
 networkx
 spade
+nltk
+torch
+scikit-learn
+h5py
+numpy
+requests
