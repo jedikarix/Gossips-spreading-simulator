@@ -127,3 +127,6 @@ dmypy.json
 *.aux
 *.log
 *.gz
+
+.idea/
+code/GenSen/data/
