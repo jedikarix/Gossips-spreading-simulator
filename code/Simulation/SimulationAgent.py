@@ -5,7 +5,6 @@ from spade.agent import Agent
 from spade.behaviour import CyclicBehaviour
 from spade.message import Message
 
-from Simulation import SimulationGraph
 from Simulation.InformationSource import InformationSource
 from Simulation.Knowledge import Knowledge
 
