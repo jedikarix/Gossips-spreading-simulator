@@ -5,8 +5,9 @@ from spade.agent import Agent
 from spade.behaviour import CyclicBehaviour
 from spade.message import Message
 
-from Simulation.Knowledge import Knowledge, KnowledgeInformation
+from Simulation import SimulationGraph
 from Simulation.InformationSource import InformationSource
+from Simulation.Knowledge import Knowledge
 
 
 def prepare_gossip_message(receiver, gossip):
@@ -41,7 +42,8 @@ class SimulationAgent(Agent):
                 print("{}: I did not received any message".format(self.agent.jid))
 
     def __init__(self, jid, password, verify_security=False,
-                 neighbours=None, information_source: InformationSource = None):
+                 neighbours=None, information_source: InformationSource = None, agent_username_to_id=None,
+                 trust_change_callback=lambda edge, trust: None):
         super().__init__(jid=jid, password=password, verify_security=verify_security)
         if neighbours is None:
             neighbours = list()
@@ -49,10 +51,15 @@ class SimulationAgent(Agent):
         self.propagate_behav = None
         self.listen_behav = None
         self.information_source = information_source
-        self.knowledge = Knowledge(trust_change_callback=self.trust_changed_callback)
+        self.agent_username_to_id = agent_username_to_id
+        self.knowledge = Knowledge(trust_change_callback=self.trust_changed_in_agent)
+        self.trust_change_callback = trust_change_callback
 
-    def trust_changed_callback(self, sender, trust):
-        print("trust change: ({}, {}): {}".format(sender, self.jid, trust))
+    def trust_changed_in_agent(self, sender, trust):
+        sender_id = self.agent_username_to_id[str(sender)]
+        agent_id = self.agent_username_to_id[str(self.jid)]
+        edge = (sender_id, agent_id)
+        self.trust_change_callback(edge, trust)
 
     async def setup(self):
         print("hello, i'm {}. My neighbours: {}".format(self.jid, self.neighbours))
