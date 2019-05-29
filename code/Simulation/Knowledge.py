@@ -14,10 +14,11 @@ class KnowledgeInformation:
 
 
 class Knowledge:
-    def __init__(self, max_inf=0):
+    def __init__(self, max_inf=0, trust_change_callback=lambda sender, trust: None):
         self.max_inf = max_inf
         self.informations = list()
         self.agents_trust = dict()
+        self.trust_change_callback = trust_change_callback
 
     def add_message(self, message: Message) -> None:
         """
@@ -28,7 +29,11 @@ class Knowledge:
         sender_trust = self.agents_trust.get(sender, 0)
         info_trust = random() - 0.5  #
         self.add_information(KnowledgeInformation(message.body, sender_trust + info_trust, sender))
-        self.agents_trust[sender] = info_trust
+        self.update_trust(sender, info_trust)
+
+    def update_trust(self, sender, trust):
+        self.agents_trust[sender] = trust
+        self.trust_change_callback(sender, trust)
 
     def add_information(self, information: KnowledgeInformation) -> None:
         """
