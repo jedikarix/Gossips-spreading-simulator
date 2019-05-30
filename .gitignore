@@ -129,4 +129,4 @@ dmypy.json
 *.gz
 
 .idea/
-code/GenSen/data/
+code/SemanticAnalysis/GenSen/data/
