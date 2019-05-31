@@ -1,4 +1,6 @@
 import asyncio
+import logging
+import json
 from random import sample, randint
 
 from spade.agent import Agent
@@ -14,6 +16,8 @@ from SemanticAnalysis.SemanticAnalyser import SemanticAnalyser
 def prepare_gossip_message(receiver, gossip):
     msg = Message(to=receiver)
     msg.body = gossip
+    # TODO gossips IDs
+    msg.metadata = dict(gossip_id=0)
     return msg
 
 
@@ -30,17 +34,23 @@ class SimulationAgent(Agent):
                 receiver = sample(self.agent.neighbours, 1)[0]
                 message = prepare_gossip_message(receiver, information.body)
                 await self.send(message)
-                print("{}: I send message to {}".format(self.agent.jid, receiver))
+
+                receiver_id = self.agent_username_to_id[str(receiver)]
+                agent_id = self.agent_username_to_id[str(self.jid)]
+                self.log(dict(msg_type="send", msg_id=message.metadata["gossip_id"], sender=agent_id, receiver=receiver_id, body=message.body))
+
             await asyncio.sleep(randint(3, 10))
 
     class ReceiveGossipBehaviour(CyclicBehaviour):
         async def run(self):
             msg = await self.receive(timeout=10)
+            sender_id = self.agent_username_to_id[str(msg.sender)]
+            agent_id = self.agent_username_to_id[str(self.jid)]
             if msg:
                 self.agent.knowledge.add_message(msg)
-                print("{}: I received message \"{}\" from {}".format(self.agent.jid, msg.body, msg.sender))
+                self.log(dict(msg_type="receive", msg_id=msg.metadata["gossip_id"], sender=sender_id, receiver=agent_id, body=msg.body))
             else:
-                print("{}: I did not received any message".format(self.agent.jid))
+                print("{}: I did not received any message".format(agent_id))
 
     def __init__(self, jid, password, semantic_analyser: SemanticAnalyser, verify_security=False,
                  neighbours=None, information_source: InformationSource = None, agent_username_to_id=None,
@@ -58,12 +68,14 @@ class SimulationAgent(Agent):
             semantic_analyser=semantic_analyser,
             trustiness=trustiness)
         self.trust_change_callback = trust_change_callback
+        self.logger = logging.getLogger()
 
     def trust_changed_in_agent(self, sender, trust):
         sender_id = self.agent_username_to_id[str(sender)]
         agent_id = self.agent_username_to_id[str(self.jid)]
         edge = (sender_id, agent_id)
         self.trust_change_callback(edge, trust)
+        self.log(dict(msg_type="trust_change", sender=agent_id, receiver=agent_id, trust_change=trust))
 
     async def setup(self):
         print("hello, i'm {}. My neighbours: {}".format(self.jid, self.neighbours))
@@ -85,3 +97,5 @@ class SimulationAgent(Agent):
                     print(self.jid, information)
                     self.knowledge.add_information(information)
 
+    def log(self, message):
+        self.logger.debug(message)
