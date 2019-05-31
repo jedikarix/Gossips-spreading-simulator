@@ -59,9 +59,9 @@ class SimulationAgent(Agent):
 
         async def run(self):
             msg = await self.receive(timeout=10)
-            sender_id = SimulationAgent.agent_username_to_id[str(msg.sender)]
             agent_id = SimulationAgent.agent_username_to_id[str(self.jid)]
-            if msg:
+            if msg is not None:
+                sender_id = SimulationAgent.agent_username_to_id[str(msg.sender)]
                 self.agent.knowledge.add_message(msg)
                 SimulationAgent.log(
                     dict(msg_type="receive", msg_id=msg.metadata["gossip_id"], sender=sender_id, receiver=agent_id,
