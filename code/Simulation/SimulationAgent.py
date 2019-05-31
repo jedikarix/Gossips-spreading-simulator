@@ -13,11 +13,10 @@ from Simulation.Knowledge import Knowledge
 from SemanticAnalysis.SemanticAnalyser import SemanticAnalyser
 
 
-def prepare_gossip_message(receiver, gossip):
+def prepare_gossip_message(receiver, information):
     msg = Message(to=receiver)
-    msg.body = gossip
-    # TODO gossips IDs
-    msg.metadata = dict(gossip_id=0)
+    msg.body = information.body
+    msg.metadata = dict(gossip_id=information.id)
     return msg
 
 
@@ -32,7 +31,7 @@ class SimulationAgent(Agent):
 
             if information is not None:
                 receiver = sample(self.agent.neighbours, 1)[0]
-                message = prepare_gossip_message(receiver, information.body)
+                message = prepare_gossip_message(receiver, information)
                 await self.send(message)
 
                 receiver_id = self.agent_username_to_id[str(receiver)]
@@ -54,7 +53,7 @@ class SimulationAgent(Agent):
 
     def __init__(self, jid, password, semantic_analyser: SemanticAnalyser, verify_security=False,
                  neighbours=None, information_source: InformationSource = None, agent_username_to_id=None,
-                 trust_change_callback=lambda edge, trust: None, trustiness: float=1.):
+                 trust_change_callback=lambda edge, trust: None, trustiness: float = 1):
         super().__init__(jid=jid, password=password, verify_security=verify_security)
         if neighbours is None:
             neighbours = list()

@@ -14,10 +14,10 @@ class InformationSource:
         config.fetch_images = False
 
         self.paper = newspaper.build(url, config=config)
-        self.summaries = list()
+        summaries_list = list()
 
         i = 0
-        while len(self.summaries) < articles_limit and i < len(self.paper.articles):
+        while len(summaries_list) < articles_limit and i < len(self.paper.articles):
             article = self.paper.articles[i]
             i += 1
             try:
@@ -27,7 +27,8 @@ class InformationSource:
             except newspaper.article.ArticleException:
                 continue
             if article.summary != str():
-                self.summaries.append(article.summary.split('\n'))
+                summaries_list.append(article.summary.split('\n'))
+        self.summaries = dict(enumerate(summaries_list))
 
     def get_information(self, trust=1):
-        return [KnowledgeInformation(sentence, trust) for sentence in choice(self.summaries)]
+        return [KnowledgeInformation(sentence, trust, id) for id, sentence in choice(list(self.summaries.items()))]

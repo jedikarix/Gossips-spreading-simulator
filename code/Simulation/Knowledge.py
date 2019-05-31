@@ -1,4 +1,5 @@
 from math import exp
+from random import random
 from typing import Union
 
 from numpy.random import choice
@@ -8,8 +9,9 @@ from SemanticAnalysis.SemanticAnalyser import SemanticAnalyser
 
 
 class KnowledgeInformation:
-    def __init__(self, body, trust, sender=None):
+    def __init__(self, body, trust, id, sender=None):
         self.body = body
+        self.id = id
         self.last_sender = sender
         self.trust = trust
 
@@ -31,6 +33,7 @@ class Knowledge:
         """
         sender = message.sender
         sender_trust = self.agents_trust.get(sender, 0)
+        information_id = message.metadata["gossip_id"]
         info_trust = exp(self.trustiness * sender_trust) / (1 - exp(self.trustiness * sender_trust))
 
         if self.informations:
@@ -46,7 +49,7 @@ class Knowledge:
                 most_entailed.trust -= info_trust
                 self.add_agent_trust(most_entailed.last_sender, -info_trust)
                 if most_entailed.trust < 0:  # we lost trust to the previous message
-                    new_info = KnowledgeInformation(message.body, sender, -most_entailed.trust)
+                    new_info = KnowledgeInformation(message.body, sender, -most_entailed.trust, information_id)
                     self.informations[self.informations.index(most_entailed)] = new_info  # replace
                 return
 
