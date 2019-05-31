@@ -21,8 +21,18 @@ def prepare_gossip_message(receiver, information):
 
 
 class SimulationAgent(Agent):
+    logger = logging.getLogger("gossip")
+    agent_username_to_id = dict()
+
+    @classmethod
+    def log(cls, message: dict):
+        cls.logger.debug(message)
 
     class PropagateGossipBehaviour(CyclicBehaviour):
+        def __init__(self, jid):
+            super().__init__()
+            self.jid = jid
+
         async def run(self):
             if len(self.agent.neighbours) == 0:
                 await asyncio.sleep(100)
@@ -34,20 +44,28 @@ class SimulationAgent(Agent):
                 message = prepare_gossip_message(receiver, information)
                 await self.send(message)
 
-                receiver_id = self.agent_username_to_id[str(receiver)]
-                agent_id = self.agent_username_to_id[str(self.jid)]
-                self.log(dict(msg_type="send", msg_id=message.metadata["gossip_id"], sender=agent_id, receiver=receiver_id, body=message.body))
+                receiver_id = SimulationAgent.agent_username_to_id[str(receiver)]
+                agent_id = SimulationAgent.agent_username_to_id[str(self.jid)]
+                SimulationAgent.log(
+                    dict(msg_type="send", msg_id=message.metadata["gossip_id"], sender=agent_id, receiver=receiver_id,
+                         body=message.body))
 
             await asyncio.sleep(randint(3, 10))
 
     class ReceiveGossipBehaviour(CyclicBehaviour):
+        def __init__(self, jid):
+            super().__init__()
+            self.jid = jid
+
         async def run(self):
             msg = await self.receive(timeout=10)
-            sender_id = self.agent_username_to_id[str(msg.sender)]
-            agent_id = self.agent_username_to_id[str(self.jid)]
+            sender_id = SimulationAgent.agent_username_to_id[str(msg.sender)]
+            agent_id = SimulationAgent.agent_username_to_id[str(self.jid)]
             if msg:
                 self.agent.knowledge.add_message(msg)
-                self.log(dict(msg_type="receive", msg_id=msg.metadata["gossip_id"], sender=sender_id, receiver=agent_id, body=msg.body))
+                SimulationAgent.log(
+                    dict(msg_type="receive", msg_id=msg.metadata["gossip_id"], sender=sender_id, receiver=agent_id,
+                         body=msg.body))
             else:
                 print("{}: I did not received any message".format(agent_id))
 
@@ -67,19 +85,19 @@ class SimulationAgent(Agent):
             semantic_analyser=semantic_analyser,
             trustiness=trustiness)
         self.trust_change_callback = trust_change_callback
-        self.logger = logging.getLogger()
+        self.knowledge = Knowledge(trust_change_callback=self.trust_changed_in_agent)
 
     def trust_changed_in_agent(self, sender, trust):
-        sender_id = self.agent_username_to_id[str(sender)]
-        agent_id = self.agent_username_to_id[str(self.jid)]
+        sender_id = SimulationAgent.agent_username_to_id[str(sender)]
+        agent_id = SimulationAgent.agent_username_to_id[str(self.jid)]
         edge = (sender_id, agent_id)
         self.trust_change_callback(edge, trust)
-        self.log(dict(msg_type="trust_change", sender=agent_id, receiver=agent_id, trust_change=trust))
+        SimulationAgent.log(dict(msg_type="trust_change", sender=agent_id, receiver=agent_id, trust_change=trust))
 
     async def setup(self):
         print("hello, i'm {}. My neighbours: {}".format(self.jid, self.neighbours))
-        self.propagate_behav = self.PropagateGossipBehaviour()
-        self.listen_behav = self.ReceiveGossipBehaviour()
+        self.propagate_behav = self.PropagateGossipBehaviour(self.jid)
+        self.listen_behav = self.ReceiveGossipBehaviour(self.jid)
 
         self.add_behaviour(self.propagate_behav)
         self.add_behaviour(self.listen_behav)

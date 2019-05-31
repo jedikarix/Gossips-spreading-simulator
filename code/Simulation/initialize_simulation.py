@@ -8,6 +8,8 @@ def initialize_agents(agent_ids, neighbours_lists, info_sources,
     agent_usernames = dict([(agent_id, "{}_{}@{}".format(basename, agent_id, hostname))
                             for agent_id in agent_ids])
     agent_username_to_id = {v: k for k, v in agent_usernames.items()}
+    SimulationAgent.agent_username_to_id = agent_username_to_id
+
     neighbours = dict([(agent_usernames[agent_id],
                         [agent_usernames[neighbour_id] for neighbour_id in neighbours_lists[agent_id]])
                        for agent_id in agent_ids])

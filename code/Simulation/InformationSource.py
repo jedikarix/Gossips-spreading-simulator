@@ -1,4 +1,5 @@
 from random import choice
+from typing import List
 
 import newspaper
 
@@ -28,7 +29,15 @@ class InformationSource:
                 continue
             if article.summary != str():
                 summaries_list.append(article.summary.split('\n'))
-        self.summaries = dict(enumerate(summaries_list))
 
-    def get_information(self, trust=1):
-        return [KnowledgeInformation(sentence, trust, id) for id, sentence in choice(list(self.summaries.items()))]
+        self.summaries = list()
+        idx = 0
+        for summary in summaries_list:
+            sentence_to_id = dict([(i, sentence) for sentence in summary for i in range(idx, idx + len(summary))])
+            idx += len(summary)
+            self.summaries.append(sentence_to_id)
+        print(self.summaries)
+
+    def get_information(self, trust: float = 1) -> List[KnowledgeInformation]:
+        return [KnowledgeInformation(sentence, trust, sentence_id) for sentence_id, sentence in
+                choice(self.summaries).items()]
