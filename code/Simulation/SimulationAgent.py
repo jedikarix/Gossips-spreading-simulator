@@ -2,6 +2,7 @@ import asyncio
 import logging
 import json
 from random import sample, randint
+import traceback
 
 from spade.agent import Agent
 from spade.behaviour import CyclicBehaviour
@@ -9,6 +10,7 @@ from spade.message import Message
 
 from Simulation.InformationSource import InformationSource
 from Simulation.Knowledge import Knowledge
+
 
 from SemanticAnalysis.SemanticAnalyser import SemanticAnalyser
 
@@ -58,16 +60,19 @@ class SimulationAgent(Agent):
             self.jid = jid
 
         async def run(self):
-            msg = await self.receive(timeout=10)
-            agent_id = SimulationAgent.agent_username_to_id[str(self.jid)]
-            if msg is not None:
-                sender_id = SimulationAgent.agent_username_to_id[str(msg.sender)]
-                self.agent.knowledge.add_message(msg)
-                SimulationAgent.log(
-                    dict(msg_type="receive", msg_id=msg.metadata["gossip_id"], sender=sender_id, receiver=agent_id,
-                         body=msg.body))
-            else:
-                print("{}: I did not received any message".format(agent_id))
+            try:
+                msg = await self.receive(timeout=10)
+                agent_id = SimulationAgent.agent_username_to_id[str(self.jid)]
+                if msg is not None:
+                    sender_id = SimulationAgent.agent_username_to_id[str(msg.sender)]
+                    self.agent.knowledge.add_message(msg)
+                    SimulationAgent.log(
+                        dict(msg_type="receive", msg_id=msg.metadata["gossip_id"], sender=sender_id, receiver=agent_id,
+                             body=msg.body))
+                else:
+                    print("{}: I did not received any message".format(agent_id))
+            except Exception as e:
+                traceback.print_exc(e)
 
     def __init__(self, jid, password, semantic_analyser: SemanticAnalyser, verify_security=False,
                  neighbours=None, information_source: InformationSource = None, agent_username_to_id=None,
@@ -113,6 +118,3 @@ class SimulationAgent(Agent):
                 for information in self.information_source.get_information():
                     print(self.jid, information)
                     self.knowledge.add_information(information)
-
-    def log(self, message):
-        self.logger.debug(message)

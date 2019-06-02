@@ -2,6 +2,7 @@ from math import exp
 from random import random
 from typing import Union
 
+import numpy as np
 from numpy.random import choice
 from spade.message import Message
 
@@ -41,23 +42,26 @@ class Knowledge:
 
             if entailment == 0:  # if message is entailed to current knowledge
                 most_entailed.trust += info_trust
-                self.add_agent_trust(most_entailed.last_sender, info_trust)
+                if most_entailed.last_sender:
+                    self.add_agent_trust(most_entailed.last_sender, info_trust)
                 most_entailed.last_sender = sender
                 return
 
             elif entailment == 2:  # if message is contradicting our current knowledge
                 most_entailed.trust -= info_trust
-                self.add_agent_trust(most_entailed.last_sender, -info_trust)
+                if most_entailed.last_sender:
+                    self.add_agent_trust(most_entailed.last_sender, -info_trust)
                 if most_entailed.trust < 0:  # we lost trust to the previous message
                     new_info = KnowledgeInformation(message.body, sender, -most_entailed.trust, information_id)
                     self.informations[self.informations.index(most_entailed)] = new_info  # replace
                 return
 
         # first information or not entailed with any that we currently have
-        self.add_information(KnowledgeInformation(message.body, sender_trust + info_trust, sender))
+        self.add_information(KnowledgeInformation(message.body, sender_trust + info_trust,
+                                                  information_id, sender))
 
     def add_agent_trust(self, sender, trust):
-        self.agents_trust[sender] += trust
+        self.agents_trust[sender] = self.agents_trust.get(sender, 0) + trust
         self.trust_change_callback(sender, self.agents_trust[sender])
 
     def add_information(self, information: KnowledgeInformation, sender=None) -> None:
@@ -84,6 +88,6 @@ class Knowledge:
         sentence = message.body
         sentences = [i.body for i in self.informations]
         entailments, levels = self.semantic_analyser.get_entailments_with_levels(sentence, sentences)
-        max_id = levels.index(max(levels))
+        max_id = np.where(max(levels) == levels)[0][0]
 
         return self.informations[max_id], entailments[max_id]
