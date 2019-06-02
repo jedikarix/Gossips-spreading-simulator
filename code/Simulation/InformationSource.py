@@ -23,7 +23,7 @@ class PredefinedInformationSource(InformationSource):
             summary = file.read().split('\n')
 
         self.summaries = list()
-        sentence_to_id = dict([(i, sentence) for sentence in summary for i in range(len(summary))])
+        sentence_to_id = {k: v for k, v in enumerate(summary)}
         self.summaries.append(sentence_to_id)
 
     def get_information(self, trust: float = 1) -> List[KnowledgeInformation]:
