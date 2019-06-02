@@ -34,7 +34,7 @@ class Knowledge:
         sender = message.sender
         sender_trust = self.agents_trust.get(sender, 0)
         information_id = message.metadata["gossip_id"]
-        info_trust = exp(self.trustiness * sender_trust) / (1 - exp(self.trustiness * sender_trust))
+        info_trust = exp(self.trustiness * sender_trust) / (1 + exp(self.trustiness * sender_trust))
 
         if self.informations:
             most_entailed, entailment = self._get_most_entailed_information(message)
