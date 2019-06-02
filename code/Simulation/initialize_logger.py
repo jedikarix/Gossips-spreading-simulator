@@ -7,7 +7,7 @@ def initialize_logger():
     Initialize and return default root logger. After this function is called,
     the logger can be also retrived directly via logging.getLogger()
     """
-    logger = logging.getLogger()
+    logger = logging.getLogger("gossip")
     logger.setLevel(logging.DEBUG)
 
     file_handler = logging.FileHandler(

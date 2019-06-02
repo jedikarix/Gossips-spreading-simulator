@@ -1,4 +1,5 @@
 from random import choice
+from typing import List
 
 import newspaper
 
@@ -14,10 +15,10 @@ class InformationSource:
         config.fetch_images = False
 
         self.paper = newspaper.build(url, config=config)
-        self.summaries = list()
+        summaries_list = list()
 
         i = 0
-        while len(self.summaries) < articles_limit and i < len(self.paper.articles):
+        while len(summaries_list) < articles_limit and i < len(self.paper.articles):
             article = self.paper.articles[i]
             i += 1
             try:
@@ -27,7 +28,16 @@ class InformationSource:
             except newspaper.article.ArticleException:
                 continue
             if article.summary != str():
-                self.summaries.append(article.summary.split('\n'))
+                summaries_list.append(article.summary.split('\n'))
 
-    def get_information(self, trust=1):
-        return [KnowledgeInformation(sentence, trust) for sentence in choice(self.summaries)]
+        self.summaries = list()
+        idx = 0
+        for summary in summaries_list:
+            sentence_to_id = dict([(i, sentence) for sentence in summary for i in range(idx, idx + len(summary))])
+            idx += len(summary)
+            self.summaries.append(sentence_to_id)
+        print(self.summaries)
+
+    def get_information(self, trust: float = 1) -> List[KnowledgeInformation]:
+        return [KnowledgeInformation(sentence, trust, sentence_id) for sentence_id, sentence in
+                choice(self.summaries).items()]

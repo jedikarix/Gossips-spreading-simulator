@@ -1,5 +1,6 @@
 from Simulation.SimulationAgent import SimulationAgent
 from Simulation.SimulationGraph import SimulationGraph
+from SemanticAnalysis.SemanticAnalyser import SemanticAnalyser
 
 
 def initialize_agents(agent_ids, neighbours_lists, info_sources,
@@ -7,17 +8,21 @@ def initialize_agents(agent_ids, neighbours_lists, info_sources,
     agent_usernames = dict([(agent_id, "{}_{}@{}".format(basename, agent_id, hostname))
                             for agent_id in agent_ids])
     agent_username_to_id = {v: k for k, v in agent_usernames.items()}
+    SimulationAgent.agent_username_to_id = agent_username_to_id
+
     neighbours = dict([(agent_usernames[agent_id],
                         [agent_usernames[neighbour_id] for neighbour_id in neighbours_lists[agent_id]])
                        for agent_id in agent_ids])
     agents = dict()
+    sem_anal = SemanticAnalyser()
     for agent_id in agent_ids:
             username = agent_usernames[agent_id]
             agents[agent_id] = SimulationAgent(username, username,
                                                neighbours=neighbours[username],
                                                information_source=info_sources.get(agent_id, None),
                                                agent_username_to_id=agent_username_to_id,
-                                               trust_change_callback=trust_change_callback)
+                                               trust_change_callback=trust_change_callback,
+                                               semantic_analyser=sem_anal)
     return agents
 
 
