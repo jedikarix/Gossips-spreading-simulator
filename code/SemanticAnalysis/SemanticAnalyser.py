@@ -55,6 +55,11 @@ class SemanticAnalyser(object):
 
         level = np.max(output, axis=1) - np.transpose(output)[1]
 
+        for i, sent in enumerate(sentences):
+            if sentence == sent:
+                entailment[i] = 0
+                level[i] = 1e10
+
         return entailment, level
 
     def get_entailment(self, sentence1, sentence2):
@@ -67,6 +72,10 @@ class SemanticAnalyser(object):
         Returns:
             0 if entailed, 1 if neutral, 2 if contradicting
         """
+
+        if sentence1 == sentence2:
+            return 0
+
         self.__mutex.acquire()
         _, encoded = self.__encoder.get_representation([sentence1, sentence2], pool='last', return_numpy=True, tokenize=True)
         input = np.concatenate((encoded[0], encoded[1], encoded[0] * encoded[1]))
