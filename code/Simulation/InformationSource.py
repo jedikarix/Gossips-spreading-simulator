@@ -18,17 +18,13 @@ class InformationSource:
 
 class PredefinedInformationSource(InformationSource):
     def __init__(self, filename):
-        sentences = []
+        summary = []
         with open(filename) as file:
-            sentences = [[sentence] for sentence in file.read().split('\n')]
+            summary = file.read().split('\n')
 
         self.summaries = list()
-        idx = 0
-        for summary in sentences:
-            sentence_to_id = dict([(i, sentence) for sentence in summary for i in range(idx, idx + len(summary))])
-            idx += len(summary)
-            self.summaries.append(sentence_to_id)
-        print(self.summaries)
+        sentence_to_id = dict([(i, sentence) for sentence in summary for i in range(len(summary))])
+        self.summaries.append(sentence_to_id)
 
     def get_information(self, trust: float = 1) -> List[KnowledgeInformation]:
         return InformationSource._get_information_impl(self.summaries, trust)
