@@ -37,6 +37,13 @@ class SimulationGraph(nx.DiGraph):
     def get_information_sources(self):
         return nx.get_node_attributes(self, "source")
 
+    def set_trustiness(self, u: int, value: float):
+        self.nodes[u]['trustiness'] = value
+
+    def get_trustiness_map(self):
+        trustiness = nx.get_node_attributes(self, "trustiness")
+        return dict([(node, trustiness.get(node, 1.)) for node in self.nodes()])
+
 
 def read_simulation_graph(filename):
     return SimulationGraph(nx.read_edgelist(filename, nodetype=int))
