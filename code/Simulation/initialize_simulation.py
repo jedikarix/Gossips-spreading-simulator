@@ -2,7 +2,7 @@ from Simulation.SimulationAgent import SimulationAgent
 from Simulation.SimulationGraph import SimulationGraph
 
 
-def initialize_agents(agent_ids, neighbours_lists, info_sources,
+def initialize_agents(agent_ids, neighbours_lists, info_sources, trustiness,
                       basename="agent", hostname="localhost", trust_change_callback=lambda edge, trust: None):
     agent_usernames = dict([(agent_id, "{}_{}@{}".format(basename, agent_id, hostname))
                             for agent_id in agent_ids])
@@ -15,6 +15,7 @@ def initialize_agents(agent_ids, neighbours_lists, info_sources,
             username = agent_usernames[agent_id]
             agents[agent_id] = SimulationAgent(username, username,
                                                neighbours=neighbours[username],
+                                               trustiness=trustiness[agent_id],
                                                information_source=info_sources.get(agent_id, None),
                                                agent_username_to_id=agent_username_to_id,
                                                trust_change_callback=trust_change_callback)
@@ -27,7 +28,8 @@ def initialize_simulation(graph: SimulationGraph, hostname="localhost"):
 
     agents_ids = graph.nodes()
     neighbours = dict([(agent_id, list(graph.neighbors(agent_id))) for agent_id in agents_ids])
-    agents = initialize_agents(agents_ids, neighbours, info_sources=graph.get_information_sources(), hostname=hostname,
+    agents = initialize_agents(agents_ids, neighbours, info_sources=graph.get_information_sources(),
+                               trustiness=graph.get_trustiness_map(), hostname=hostname,
                                trust_change_callback=update_trust)
     for agent in agents.values():
         agent.start()
