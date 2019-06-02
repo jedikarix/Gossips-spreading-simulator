@@ -14,8 +14,12 @@ def plot_graph(simulation_graph, label_font_size=7, label_position=0.1, float_pr
             return "#%02X%02X%02X" % (0, color_value, 0)
         else:
             return "#%02X%02X%02X" % (color_value, 0, 0)
+
+    trustiness_map = simulation_graph.get_trustiness_map()
+    node_cmap =["#%02X%02X%02X" % (round(255*(1 - trustiness)), round(255*trustiness), 0) for node, trustiness in trustiness_map.items()]
     pos = nx.shell_layout(simulation_graph)
     nx.draw(simulation_graph, pos, with_labels=True, font_weight='bold')
+    nx.draw_networkx_nodes(simulation_graph, pos=pos, node_color=node_cmap, with_labels=True)
     edge_labels = dict([((u, v,), round(d['trust'], float_precision))
                         for u, v, d in simulation_graph.edges(data=True)])
     labels_colors = dict([((u, v,), gen_color(d['trust']))

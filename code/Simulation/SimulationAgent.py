@@ -85,7 +85,7 @@ class SimulationAgent(Agent):
             semantic_analyser=semantic_analyser,
             trustiness=trustiness)
         self.trust_change_callback = trust_change_callback
-        self.knowledge = Knowledge(trust_change_callback=self.trust_changed_in_agent)
+        # self.knowledge = Knowledge(trust_change_callback=self.trust_changed_in_agent)
 
     def trust_changed_in_agent(self, sender, trust):
         sender_id = SimulationAgent.agent_username_to_id[str(sender)]
