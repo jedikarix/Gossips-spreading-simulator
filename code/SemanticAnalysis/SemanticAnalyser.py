@@ -19,12 +19,12 @@ class SemanticAnalyser(object):
         """Initalizes object
         """
         self.__encoder = GenSenSingle(
-            model_folder=os.path.join('GenSen', 'data', 'models'),
+            model_folder=os.path.join(os.path.dirname(__file__), 'GenSen', 'data', 'models'),
             filename_prefix='nli_large',
-            pretrained_emb=os.path.join('GenSen', 'data', 'embedding', 'glove.840B.300d.h5')
+            pretrained_emb=os.path.join(os.path.dirname(__file__), 'GenSen', 'data', 'embedding', 'glove.840B.300d.h5')
         )
 
-        with open(os.path.join('GenSen', 'data', 'models', 'senteval.pickle'), 'rb') as file:
+        with open(os.path.join(os.path.dirname(__file__), 'GenSen', 'data', 'models', 'senteval.pickle'), 'rb') as file:
             self.__evaluator = pickle.load(file)
 
         self.__mutex = Lock()

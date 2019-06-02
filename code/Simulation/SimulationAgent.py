@@ -8,6 +8,8 @@ from spade.message import Message
 from Simulation.InformationSource import InformationSource
 from Simulation.Knowledge import Knowledge
 
+from SemanticAnalysis.SemanticAnalyser import SemanticAnalyser
+
 
 def prepare_gossip_message(receiver, gossip):
     msg = Message(to=receiver)
@@ -40,9 +42,9 @@ class SimulationAgent(Agent):
             else:
                 print("{}: I did not received any message".format(self.agent.jid))
 
-    def __init__(self, jid, password, verify_security=False,
+    def __init__(self, jid, password, semantic_analyser: SemanticAnalyser, verify_security=False,
                  neighbours=None, information_source: InformationSource = None, agent_username_to_id=None,
-                 trust_change_callback=lambda edge, trust: None):
+                 trust_change_callback=lambda edge, trust: None, trustiness: float=1.):
         super().__init__(jid=jid, password=password, verify_security=verify_security)
         if neighbours is None:
             neighbours = list()
@@ -51,7 +53,10 @@ class SimulationAgent(Agent):
         self.listen_behav = None
         self.information_source = information_source
         self.agent_username_to_id = agent_username_to_id
-        self.knowledge = Knowledge(trust_change_callback=self.trust_changed_in_agent)
+        self.knowledge = Knowledge(
+            trust_change_callback=self.trust_changed_in_agent,
+            semantic_analyser=semantic_analyser,
+            trustiness=trustiness)
         self.trust_change_callback = trust_change_callback
 
     def trust_changed_in_agent(self, sender, trust):
