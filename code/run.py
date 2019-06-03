@@ -72,7 +72,6 @@ def main():
         print("Invalid test id")
         exit(2)
 
-    initialize_logger()
     initialize_simulation(graph)
     plot_graph_live(graph, 1)
 
