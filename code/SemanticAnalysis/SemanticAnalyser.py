@@ -85,7 +85,7 @@ class SemanticAnalyser(object):
         return np.argmax(output)
 
     def __model_predict(self, input):
-        sentence_size = input.shape[1]
+        sentence_size = input.shape[1] // 3
         batch_size = input.shape[0]
         switched_input = np.hstack((input[:, sentence_size:2*sentence_size], input[:, 0:sentence_size], input[:, 2*sentence_size:3*sentence_size]))
 
