@@ -1,0 +1,154 @@
+\documentclass{article}
+
+\usepackage{fancyhdr}
+\usepackage[english,polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{titling}
+\usepackage{graphicx}
+\usepackage{indentfirst}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+\title{Projekt WEDT + SAG \\ Symulator rozchodzenia się plotek \\ Dokumentacja wstępna}
+\author{Karol Chęciński, Tomasz Gałecki, Jakub Łyskawa}
+\setlength{\droptitle}{-10em}
+\begin{document}
+	\maketitle
+	\section{Opis projektu}
+		Projekt polega na utworzeniu symulatora rozchodzenia się plotek. Stosując uproszczony model kontaktów międzyludzkich oparty o sieć agentów porozumiewających się ze sobą, chcemy zbadać w jaki sposób rozprzestrzeniają się informacje w społecznościach. Agenty czerpią informacje z artykułów znalezionych w serwisach informacyjnych. Wybrane informacje przekazują dalej, do swoich sąsiadów w sieci połączeń. 
+		By symulacja nie opierała się wyłącznie na powielaniu i propagowaniu otrzymywanych wiadomości, model zostanie wzbogacony o dodatkowe mechanizmy. Po pierwsze, do zadań agenta będzie należeć także ocena wiarygodności informacji. Otrzymanie informacji sprzecznej lub zgodnej z przekonaniami agenta będzie odpowiednio obniżać lub podnosić zaufanie do agenta, który daną informację dostarczył. W czasie propagacji plotki istnieć będzie niewielka szansa, że informacja w niej zawarta zostanie zniekształcona. 
+	\section{Opis modelu}
+	\subsection{Graf połączeń}
+		Model symulacji można przedstawić za pomocą grafu, w którym wierzchołki reprezentują poszczególnych agentów. Krawędzie łączą agentów, którzy się ,,znają'', czyli mogą przekazywać między sobą informacje. Taki graf można rozpatrywać jako graf ważony i skierowany, gdy waga krawędzi z wierzchołka $v_A$, a $v_B$ reprezentuje zaufanie agenta A do agenta B.
+		W projekcie chcemy uwzględnić grafy predefiniowane oraz generowane losowo. Przykładowe opisy topologii:
+		\begin{description}
+		\item[Podzbiór grafu pełnego]
+		Z grafu pełnego o $n$ wierzchołkach losowane jest $c\frac{n(n-1)}{2}, c \in [\frac{2}{n}, 1]$ krawędzi tak, by był spójny. Taki graf ma względnie regularną strukturę. W skrajnym przypadku, gdy $c = \frac{2}{n}$ zostanie wygenerowane drzewo, które również może być interesującym przypadkiem do analizy.
+		\item[Grafy połączone mostami]
+		Graf zbudowany jest z kilku grup - grafów opisanych w punkcie wyżej, przy czym dodatkowo połączone są losowe pary wierzchołków z różnych grup. Topologii tego typu można użyć do zbadania, jak między grupami rozchodzić się będą informacje pochodzące z różnych źródeł, oraz jak kształtować się będzie zaufanie między członkami różnych grup.
+		\item [Cykl] o długości $n$.
+		\end{description}
+	\subsection{Charakterystyka agenta}
+	Każdy węzeł w grafie połączeń reprezentuje agenta.
+	\begin{description}
+		\item[Interakcje między agentami]
+		Agent może otrzymywać oraz przekazywać informacje innym agentom.
+		Protokołem komunikacyjnym agentów jest język naturalny, tj.
+		przekazanie informacji między agentami następuje poprzez rozmowę
+w języku angielskim.
+		\item[Stan agenta]
+		Stan agenta składa się z trzech elementów:
+		\begin{itemize}
+			\item {Informacje otrzymane od innych agentów - 
+			Liczba tych informacji może być ograniczona lub nie, co jest sterowane parametrem,
+			ponadto nie są duplikowane informacje które agent już posiada albo sprzeczne z posiadanymi.}
+			\item {Poziom zaufania do każdej posiadanej informacji}
+			\item {Poziom zaufania do każdego połączonego agenta}
+		\end{itemize}	
+		\item[Model wiedzy]
+		Wiedza agenta implikuje sposób reakcji agenta na otrzymywane informacje. Na wiedzę składają się otrzymane do tej pory plotki (w postaci tekstu lub embeddingów zdań) wraz z poziomem zaufania do nich. Proponowany sposób modyfikacji wiedzy został opisany dokładniej w punkcie \textbf{2.3 - Model zaufania}. Wiedza agenta może również wpływać na sposób modyfikacji otrzymywanych plotek, jeśli zostanie zastosowana wersja z subiektywną modyfikcją opisana w punkcie \textbf{2.4 - Plotki}.
+		\item[Parametry agenta] Każdy agent może być niezależnie parametryzowany następującymi wartościami:
+		\begin{itemize}
+			\item{Bazowe prawdopodobieństwo przekazania dalej otrzymanej informacji}
+			\item{Maksymalna liczba przechowywanych informacji}
+			\item{Bazowy wpływ informacji na wiedzę}
+			\item{Ufność}
+			\item{Parametry związane z modyfikacją informacji}
+		\end{itemize}
+	\end{description}
+	\subsection{Model zaufania}
+	Wstępny opis działania modelu zaufania:
+	\begin{enumerate}
+		\item Agent otrzymuje od innego agenta $n$ informację $p$
+		\item Poziom zaufania informacji $p$: $ z = sigmoid(U \cdot Z_a(n)) $
+		\item Jeżeli to pierwsza otrzymana informacja,
+		zapamiętaj $p$ z $ Z_p(p) \leftarrow z, A(p) \leftarrow n $.
+		W przeciwnym wypadku kontynuuj.
+		\item Wybierz z przechowywanych informację $p'$ najsilniej związaną semantycznie z $p$
+		\item Jeżeli $p'$ jest niezwiązana z $p$, zapamiętaj $p$ z $ Z_p(p) \leftarrow z, A(p) \leftarrow n $ i przerwij.
+		\item Jeżeli $p'$ jest równoznaczna z $p$ to:\\
+		$ Z_p(p') \leftarrow Z_p(p') + z, Z_a(A(p')) \leftarrow Z_a(A(p')) + z , A(p') \leftarrow n $
+		\item Jeżeli $p'$ jest sprzeczna z $p$ to:\\
+		$ Z_p(p') \leftarrow Z_p(p') - z, Z_a(A(p')) \leftarrow Z_a(A(p')) - z$\\
+		Jeżeli $ Z_p(p') < 0 $ to zapomnij $p'$, zapamiętaj $p$ z\\
+		$ Z_p(p) \leftarrow -Z_p(p'), A(p) \leftarrow n $
+	\end{enumerate}
+	Oznaczenia:
+	\begin{itemize}
+		\item[$Z_a(x)$] Poziom zaufania agenta do agenta $x$, początkowo $0$
+		\item[$Z_p(x)$] Poziom zaufania agenta do informacji $x$, początkowo $0$
+		\item[$A(x)$] Agent od którego została po raz ostatni otrzymana informacja równoznaczna z $x$
+		
+		\item[$U$] Parametr ufności
+		
+	\end{itemize}
+	\subsection{Plotki}
+	\begin{description}
+		\item[Modyfikacja]
+		W toku analizy problemu doszliśmy do wniosku, że modyfikacji plotki można dokonać na dwóch płaszczyznach, które można określić jako fonetyczna i semantyczna. Płaszczyzna fonetyczna odpowiada za drobne zakłócenia w komunikacji. Losowe słowa w plotce zastępowane są innymi, brzmiącymi podobnie lub różniącymi się pojedynczymi literami. Prawdopodobieństwo dokonania konkretnej modyfikacji może być zależne od odległości Levenshteina między słowem bazowym a docelowym. Sposób modyfikacji jest w tym przypadku globalny. Można jednak dokonać parametryzacji intensywności tego typu zakłóceń na poziomie poszczególnych agentów.
+	
+		Modyfikacja na płaszczyźnie semantycznej polega na podmianie wybranych słów na takie, które pojawiają się w podobnych kontekstach. W tym przypadku mutacja oparta jest o model języka np. w postaci n-gramów. W najprostszym wariancie model języka może być globalny, w bardziej złożonym w pewnym stopniu zależny od wiedzy agenta. W ten sposób można byłoby uzyskać pewne tendencyjne modyfikacje.
+		W projekcie mamy zamiar skupić się na jednym z zaproponowanych wariantów modyfikacji plotek.
+		\item[Schemat komunikacji]
+	W podstawowym wariancie plotki będą przekazywane między agentami w sposób bezpośredni (jako przesłanie obiektu z treścią plotki i dodatkowymi parametrami, np. ID). W wariancie rozszerzonym taka bezpośrednia komunikacja zostałaby zastąpiona przez rozmowę botów, które po wymianie początkowych uprzejmości, wygłaszałyby plotkę. Ten scenariusz może zostać także rozbudowany o dodatkową reakcję bota, który słucha plotki (np. \textit{OK, ciekawe.}, \textit{Nie, nie wydaje mi się.}, \textit{Tak, słyszałem o tym} etc.) bazującą na poziomie zaufania do nowo odebranej plotki. Na podstawie infromacji zwrotnej nadawca mógłby skorygować swoje zaufanie do rozpowszechnianej informacji.
+	\end{description}
+	\subsection{Logowanie}
+	Każdy agent będzie prowadził własny dziennik zdarzeń. Każda akcja (odebranie plotki, wysłanie plotki, przeprowadzenie mutacji, zmiana poziomu zaufania, modyfikacja bazy wiedzy) będzie odnotowywana razem ze stemplem czasowym. Wszelkie operacje na plotkach będą również zawierały identyfikator plotki.
+	
+	Po przeprowadzeniu eksperymentu, pliki dzienników zostaną zebrane od wszystkich agentów. Następnie informacje z dzienników zostaną poddane scaleniu tak, aby wydzielić pełne ścieżki przepływu każdej z plotek.
+	\section{Kwestie techniczne}
+	Projekt zostanie zaimplementowany w języku \textit{Python}. Wieloagentowość systemu zostanie zrealizowana za pomocą biblioteki \textit{multiprocessing}. Plotki pomiędzy agentami będą przesyłane za pomocą kolejek międzyprocesowych.
+	
+	Proces budowy grafu połączeń będzie zautomatyzowany. Graf będzie opisywany za pomocą plików tekstowych o formacie przystosowanym do przechowywania danych (np. \textit{YAML} lub \textit{JSON}).
+	
+	Każdy z agentów będzie reprezentowany przez obiekt klasy agenta; będzie posiadał własny zasób wiedzy (poprzednich plotek) jako listę. Baza wiedzy domyślnie będzie nielimitowana.
+	
+	Plotki będą przygotowywane na bazie artykułów z anglojęzycznych serwisów informacyjnych. Pełne teksty artykułów będą skracane do jednego/kilku zdań. Planujemy użyć do tego biblioteki \href{https://github.com/DerwenAI/pytextrank}{pytextrank} i/lub \href{https://pypi.org/project/gensim/}{gensim}. Artykuły pobierane będą przy użyciu biblioteki \href{https://newspaper.readthedocs.io/}{newspaper}.
+	
+	Powiązanie semantyczne będzie wyliczane przy pomocy narzędzia \href{http://nlpprogress.com/english/semantic_textual_similarity.html}{SentEval}.
+	
+	Logi w systemie będą zbierane za pomocą biblioteki \href{https://docs.python.org/3/library/logging.html#module-logging}{logging}.
+	
+	Jeśli chatbot zostanie użyty do przeprowadzania konwersacji, zostanie użyta biblioteka \href{https://chatterbot.readthedocs.io/en/stable/}{chatterbot}.
+	
+	\section{Przykładowe eksperymenty}
+	Zaproponowany kształt symulacji umożliwia zbadanie wielu interesujacych zjawisk. Poniżej opisane zostały propozycje eksperymentów.
+	\begin{itemize}
+	\item Badanie w jaki sposób rozpowszechnianie fałszywych plotek przez pojedynczego agenta wpłynie na zaufanie do niego.
+	\item Kształtowanie zaufania między grupami agentów korzystających z tego samego lub różnych źródeł informacji.
+	\item Badanie pojawiania się w sieci sprzecznych informacji mimo korzystania z tego samego źródła danych w zależności od parametrów mutacji plotek.
+	\item Porównanie kształtowania zaufania w sieci z włączonym i wyłączonym mechanizmem modyfikowania plotek.
+	\end{itemize}
+	\section{Zadania}
+	\begin{itemize}
+	\item Pobieranie danych z różnych serwisów informacyjnych
+	\item Graf
+		\begin{itemize}
+		\item Generowanie grafu agentów
+		\item Implementacja komunikacji między agentami
+		\item System raportowania przesyłanych plotek
+		\item Uruchamianie eksperymentów z zadanymi parametrami
+		\end{itemize}
+	\item Agent
+		\begin{itemize}
+		\item Implementacja mechanizmu zaufania
+		\item Wytrenowanie modelu oceny powiązania informacji
+		\end{itemize}
+	\item Plotka
+		\begin{itemize}
+		\item Stworzenie struktury plotki wraz z metadanymi
+		\item Losowa modyfikacja plotek
+		\end{itemize}
+	\item Logowanie
+		\begin{itemize}
+		\item System zbierania i opracowywania logów od poszczególnych agentów
+		\end{itemize}
+	\end{itemize}
+\end{document}
+
+
