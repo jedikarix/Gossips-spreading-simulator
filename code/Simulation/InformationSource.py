@@ -7,6 +7,8 @@ from Simulation.Knowledge import KnowledgeInformation
 
 
 class InformationSource:
+    info_id = 0
+
     def get_information(self, trust: float = 1) -> List[KnowledgeInformation]:
         raise NotImplementedError("get_information is virtual")
 
@@ -18,12 +20,12 @@ class InformationSource:
 
 class PredefinedInformationSource(InformationSource):
     def __init__(self, filename):
-        summary = []
         with open(filename) as file:
             summary = file.read().split('\n')
 
         self.summaries = list()
-        sentence_to_id = {k: v for k, v in enumerate(summary)}
+        sentence_to_id = dict(zip(range(InformationSource.info_id, InformationSource.info_id + len(summary)), summary))
+        InformationSource.info_id += len(summary)
         self.summaries.append(sentence_to_id)
 
     def get_information(self, trust: float = 1) -> List[KnowledgeInformation]:
@@ -31,6 +33,7 @@ class PredefinedInformationSource(InformationSource):
 
 
 class OnlineInformationSource(InformationSource):
+
     def __init__(self, url: str, articles_limit=100, summary_sentences=5):
         config = newspaper.Config()
         config.MAX_SUMMARY_SENT = summary_sentences
@@ -54,10 +57,10 @@ class OnlineInformationSource(InformationSource):
                 summaries_list.append(article.summary.split('\n'))
 
         self.summaries = list()
-        idx = 0
         for summary in summaries_list:
-            sentence_to_id = dict([(i, sentence) for sentence in summary for i in range(idx, idx + len(summary))])
-            idx += len(summary)
+            sentence_to_id = dict(
+                zip(range(InformationSource.info_id, InformationSource.info_id + len(summary)), summary))
+            InformationSource.info_id += len(summary)
             self.summaries.append(sentence_to_id)
 
     def get_information(self, trust: float = 1) -> List[KnowledgeInformation]:
