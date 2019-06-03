@@ -80,6 +80,7 @@ def groups_graph(groups_sizes: List[int], groups_completion: Union[List[float], 
         groups.append(list(range(added_nodes, added_nodes + size)))
         added_nodes += size
 
-    G = add_groups_connections(G, groups, max_connections=max_connections)
+    if max_connections > 0:
+        G = add_groups_connections(G, groups, max_connections=max_connections)
 
     return SimulationGraph(G), groups
