@@ -6,7 +6,11 @@ from Simulation.InformationSource import InformationSource
 
 
 class SimulationGraph(nx.DiGraph):
-
+    """
+    Simulation graph representing relations between agents (represented as nodes). Each directed edge describes possible
+    information flow between agents. Each edge has it's trust value, which describes how much some agent trust other
+    agent (e.g. trust on edge (1, 2) describes trust of agent 2 to the agent 1)
+    """
     def __init__(self, data=None, **attr):
         super().__init__(data, **attr)
 

@@ -3,10 +3,17 @@ from time import sleep
 import matplotlib.pyplot as plt
 import networkx as nx
 
+from Simulation import SimulationGraph
 
-def plot_graph(simulation_graph, label_font_size=7, label_position=0.1, float_precision=2, non_blocking_mode=False):
+
+def plot_graph(simulation_graph: SimulationGraph, label_font_size=7, label_position=0.1, float_precision=2, non_blocking_mode=False):
     """
     Plots simulation graph. It assumes that the graph has trust parameter in each edge.
+    :param simulation_graph: the graph to plot
+    :param label_font_size: font size of the labels (trust value)
+    :param label_position: position of the label on the edge (closer to 0 - closer to the arrow)
+    :param float_precision: precision of the trust label
+    :param non_blocking_mode: whether to block instantaneously (to plot right away)
     """
     def gen_color(trust):
         color_value = int(round(min([255, 255*abs(trust)])))
@@ -35,7 +42,15 @@ def plot_graph(simulation_graph, label_font_size=7, label_position=0.1, float_pr
         plt.show()
 
 
-def plot_graph_live(simulation_graph, refresh_period_s, label_font_size=7, label_position=0.1, float_precision=2):
+def plot_graph_live(simulation_graph: SimulationGraph, refresh_period_s: float, label_font_size=7, label_position=0.1, float_precision=2):
+    """
+    Plots graph live with refresh some refresh rate.
+    :param simulation_graph: the graph to plot
+    :param refresh_period_s: delay between each plot. 0.0 to plot as fast as possible
+    :param label_font_size: font size of the labels (trust value)
+    :param label_position: position of the label on the edge (closer to 0 - closer to the arrow)
+    :param float_precision: precision of the trust label
+    """
     plt.ion()
     plt.show()
     while True:
@@ -46,9 +61,19 @@ def plot_graph_live(simulation_graph, refresh_period_s, label_font_size=7, label
         plt.clf()
 
 
-def serialize_graph(G, path):
-    nx.write_gpickle(G, path)
+def serialize_graph(simulation_graph: SimulationGraph, path: str):
+    """
+    Serialize the graph to file.
+    :param simulation_graph: graph to serialize
+    :param path: path to the output file
+    """
+    nx.write_gpickle(simulation_graph, path)
 
 
-def deserialize_graph(path):
+def deserialize_graph(path: str) -> SimulationGraph:
+    """
+    Read graph from file.
+    :param path: path to the file with the graph
+    :return: deserialized graph
+    """
     return nx.read_gpickle(path)

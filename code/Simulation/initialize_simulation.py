@@ -1,10 +1,38 @@
+from typing import Dict
+
 from Simulation.SimulationAgent import SimulationAgent
 from Simulation.SimulationGraph import SimulationGraph
 from SemanticAnalysis.SemanticAnalyser import SemanticAnalyser
+from Simulation.initialize_logger import initialize_logger
 
 
-def initialize_agents(agent_ids, neighbours_lists, info_sources, trustiness,
-                      basename="agent", hostname="localhost", trust_change_callback=lambda edge, trust: None):
+def initialize_simulation(graph: SimulationGraph, hostname: str = "localhost") -> Dict[int, SimulationAgent]:
+    """
+    Initialize simulation for some graph.
+    :param graph: graph representing connections and trust between agents (as edge parameter 'trust')
+    :param hostname: hostname of the nodes in spade
+    :return: dictionary with (node_id, SimulationAgent) mapping
+    """
+    def update_trust(edge, trust):
+        graph.edges[edge]['trust'] = trust
+
+    agents_ids = graph.nodes()
+    neighbours = dict([(agent_id, list(graph.neighbors(agent_id))) for agent_id in agents_ids])
+    agents = _initialize_agents(agents_ids, neighbours, info_sources=graph.get_information_sources(),
+                                trustiness=graph.get_trustiness_map(), hostname=hostname,
+                                trust_change_callback=update_trust)
+    initialize_logger()
+    for agent in agents.values():
+        agent.start()
+
+    for agent in agents.values():
+        agent.stop()
+
+    return agents
+
+
+def _initialize_agents(agent_ids, neighbours_lists, info_sources, trustiness,
+                       basename="agent", hostname="localhost", trust_change_callback=lambda edge, trust: None):
     agent_usernames = dict([(agent_id, "{}_{}@{}".format(basename, agent_id, hostname))
                             for agent_id in agent_ids])
     agent_username_to_id = {v: k for k, v in agent_usernames.items()}
@@ -24,22 +52,4 @@ def initialize_agents(agent_ids, neighbours_lists, info_sources, trustiness,
                                                agent_username_to_id=agent_username_to_id,
                                                trust_change_callback=trust_change_callback,
                                                semantic_analyser=sem_anal)
-    return agents
-
-
-def initialize_simulation(graph: SimulationGraph, hostname="localhost"):
-    def update_trust(edge, trust):
-        graph.edges[edge]['trust'] = trust
-
-    agents_ids = graph.nodes()
-    neighbours = dict([(agent_id, list(graph.neighbors(agent_id))) for agent_id in agents_ids])
-    agents = initialize_agents(agents_ids, neighbours, info_sources=graph.get_information_sources(),
-                               trustiness=graph.get_trustiness_map(), hostname=hostname,
-                               trust_change_callback=update_trust)
-    for agent in agents.values():
-        agent.start()
-
-    for agent in agents.values():
-        agent.stop()
-
     return agents
