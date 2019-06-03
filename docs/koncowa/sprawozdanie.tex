@@ -154,7 +154,13 @@
 	\end{itemize}
 	
 	\section{Podsumowanie}
-	\todo{Podsumowanie - opisać jak wyszła symulacja, jakie były problemy (np. słaby model), podsumować krótko eksperymenty}
+	Dzięki wykorzystaniu \textit{Prodigy} jako serwera XMPP w połączeniu z modułem \textit{spade} wydajność naszego systemu była zadowalająca (sieć działała bezproblemowo dla 30 agentów, 40\% wypełnienia). Ponadto sama implementacja wieloagentowości w oparciu o \textit{spade} była bardzo prosta w przygotowaniu i sama w sobie zajęła kiladziesiąt linii.
+
+	Dużym problemem okazał się dość słaby model do semantyki języka. Spróbowaliśmy przenalizować kilkanaście zdań stworzonych ręcznie i zgodność lub niezgodność zdań była czasami mocno nieprzewidywalna; w tym czasami nawet kolejność porównywanych zdań miała znaczenie (a == b dawało wynik różny niż b == a). Powodowało to dość słabe zachowanie się całej symulacji przy korzystaniu z rzeczywistych źródeł informacji.
+
+	Jednakże dla kontrolowanych eksperymentów, kiedy doładnie zdefiniowaliśmy wiedzę dla każdego agenta, model symulacji zachowywał się bardzo przewidywalnie i zgodnie z intuicją. 
+	
+	W przypadku K3 jeśli jeden z węzłów rozgłaszał nieprawdziwe informacje, bardzo szybko zaufanie do niego spadało. W przypadku większych sieci, jeśli w sieci istniało mało różnych źródeł informacji, to agenci meli tendencję do ufania sobie wzajemnie. Jeśli zaś źródeł było więcej, wtedy sieć zachowywała się różnie i była bardziej niestabilna w kontekście poziomu zaufania.
 \end{document}
 
 
