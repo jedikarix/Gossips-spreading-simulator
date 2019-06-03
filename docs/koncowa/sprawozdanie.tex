@@ -97,24 +97,25 @@ w języku angielskim.
 		\item[Schemat komunikacji]
 	W podstawowym wariancie plotki będą przekazywane między agentami w sposób bezpośredni (jako przesłanie obiektu z treścią plotki i dodatkowymi parametrami, np. ID). W wariancie rozszerzonym taka bezpośrednia komunikacja zostałaby zastąpiona przez rozmowę botów, które po wymianie początkowych uprzejmości, wygłaszałyby plotkę. Ten scenariusz może zostać także rozbudowany o dodatkową reakcję bota, który słucha plotki (np. \textit{OK, ciekawe.}, \textit{Nie, nie wydaje mi się.}, \textit{Tak, słyszałem o tym} etc.) bazującą na poziomie zaufania do nowo odebranej plotki. Na podstawie infromacji zwrotnej nadawca mógłby skorygować swoje zaufanie do rozpowszechnianej informacji.
 	\end{description}
+
 	\subsection{Logowanie}
-	Każdy agent będzie prowadził własny dziennik zdarzeń. Każda akcja (odebranie plotki, wysłanie plotki, przeprowadzenie mutacji, zmiana poziomu zaufania, modyfikacja bazy wiedzy) będzie odnotowywana razem ze stemplem czasowym. Wszelkie operacje na plotkach będą również zawierały identyfikator plotki.
-	
-	Po przeprowadzeniu eksperymentu, pliki dzienników zostaną zebrane od wszystkich agentów. Następnie informacje z dzienników zostaną poddane scaleniu tak, aby wydzielić pełne ścieżki przepływu każdej z plotek.
+	Cały system logowania jest oparty na jednym pliku obsługiwanym przez bibliotekę \texttt{loggigng}. Każda akcja (odebranie plotki, wysłanie plotki, zmiana poziomu zaufania) jest odnotowywana razem ze stemplem czasowym. Wszelkie operacje na plotkach również zawierają identyfikator plotki. Identyfikator plotki jest nadawany w momencie jej tworzenia w \textit{InformationSource}, które inicjuje bazę wiedzy nadając wszystkim informacjom ich ID. Każde źródło informacji numeruje uzykane informacje w sposób ciągły, i wspólny dla wszysktich źródeł informacji.
+
+	Plik z logami jest utrzymany w formacie JSON. Dzięki temu po zakończonej symulacji można w prosty sposób odtworzyć tok symulacji i np. wyłuskać ewolucję informacji w kolejnych przesłaniach w sieci.
 	\section{Kwestie techniczne}
-	Projekt zostanie zaimplementowany w języku \textit{Python}. Wieloagentowość systemu zostanie zrealizowana za pomocą biblioteki \textit{multiprocessing}. Plotki pomiędzy agentami będą przesyłane za pomocą kolejek międzyprocesowych.
+	Projekt zostanie zaimplementowany w języku \textit{Python}. Wieloagentowość systemu zostanie zrealizowana za pomocą biblioteki \textit{spade}. Plotki pomiędzy agentami będą przesyłane za pomocą mechanizmów \textit{spade}.
 	
-	Proces budowy grafu połączeń będzie zautomatyzowany. Graf będzie opisywany za pomocą plików tekstowych o formacie przystosowanym do przechowywania danych (np. \textit{YAML} lub \textit{JSON}).
+	Proces budowy grafu połączeń jest zautomatyzowany. Graf jest opisywany za pomocą plików tekstowych w formacie JSON. Przykładowe grafy (jak np. graf pełny, kilka pomniejszych grup połączonych mostami etc.) zostały wygenerowane proceduralnie na początku eksperymentów.
+
+	Dodatkowo przygotowaliśmy narzędzia do dynamicznego rysowania grafu, który odświeża się co pewien czas najnowszymi wagami wpisanymi do grafu.
 	
-	Każdy z agentów będzie reprezentowany przez obiekt klasy agenta; będzie posiadał własny zasób wiedzy (poprzednich plotek) jako listę. Baza wiedzy domyślnie będzie nielimitowana.
+	Każdy z agentów jest reprezentowany przez obiekt klasy agenta; posiada własny zasób wiedzy (poprzednich plotek) jako listę. Baza wiedzy jest domyślnie nielimitowana.
 	
-	Plotki będą przygotowywane na bazie artykułów z anglojęzycznych serwisów informacyjnych. Pełne teksty artykułów będą skracane do jednego/kilku zdań. Planujemy użyć do tego biblioteki \href{https://github.com/DerwenAI/pytextrank}{pytextrank} i/lub \href{https://pypi.org/project/gensim/}{gensim}. Artykuły pobierane będą przy użyciu biblioteki \href{https://newspaper.readthedocs.io/}{newspaper}.
+	Plotki są przygotowywane na bazie artykułów z anglojęzycznych serwisów informacyjnych. Pełne teksty artykułów są skracane do kilku zdań (domyślnie 5) i jako całość traktowane jako \textit{kwant wiedzy}, który posiadają agenci. Użyliśmy do tego jak i pobierania samych artykułów  biblioteki \href{https://newspaper.readthedocs.io/}{newspaper}. Dodaliśmy też opcję predefiniowanych źródeł wiedzy (które jako źródło traktują plik tekstowy) do przeprowadzania bardziej kontrolowanych eksperymentów.
 	
-	Powiązanie semantyczne będzie wyliczane przy pomocy narzędzia \href{http://nlpprogress.com/english/semantic_textual_similarity.html}{SentEval}.
+	Powiązanie semantyczne jest wyliczane przy pomocy narzędzia \href{http://nlpprogress.com/english/semantic_textual_similarity.html}{SentEval}.
 	
-	Logi w systemie będą zbierane za pomocą biblioteki \href{https://docs.python.org/3/library/logging.html#module-logging}{logging}.
-	
-	Jeśli chatbot zostanie użyty do przeprowadzania konwersacji, zostanie użyta biblioteka \href{https://chatterbot.readthedocs.io/en/stable/}{chatterbot}.
+	Logi w systemie są zbierane za pomocą biblioteki \href{https://docs.python.org/3/library/logging.html#module-logging}{logging}.
 	
 	\section{Przykładowe eksperymenty}
 	Zaproponowany kształt symulacji umożliwia zbadanie wielu interesujacych zjawisk. Poniżej opisane zostały propozycje eksperymentów.
