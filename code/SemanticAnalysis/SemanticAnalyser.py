@@ -79,12 +79,18 @@ class SemanticAnalyser(object):
         self.__mutex.acquire()
         _, encoded = self.__encoder.get_representation([sentence1, sentence2], pool='last', return_numpy=True, tokenize=True)
         input = np.concatenate((encoded[0], encoded[1], encoded[0] * encoded[1]))
-        output = self.__model_predict([input])
+        output = self.__model_predict(np.array([input]))
         self.__mutex.release()
 
         return np.argmax(output)
 
     def __model_predict(self, input):
+        sentence_size = input.shape[1]
+        batch_size = input.shape[0]
+        switched_input = np.hstack((input[:, sentence_size:2*sentence_size], input[:, 0:sentence_size], input[:, 2*sentence_size:3*sentence_size]))
+
+        input = np.vstack((input, switched_input))
+        
         self.__evaluator.model.eval()
         input = torch.FloatTensor(input).cuda()
         yhat = []
@@ -94,4 +100,5 @@ class SemanticAnalyser(object):
                 output = self.__evaluator.model(x)
                 yhat.append(output.data.cpu().numpy())
         yhat = np.vstack(yhat)
+        yhat = (yhat[0:batch_size, :] + yhat[batch_size:2*batch_size, :]) / 2
         return yhat
