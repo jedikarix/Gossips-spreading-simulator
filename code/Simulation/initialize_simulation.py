@@ -49,7 +49,6 @@ def _initialize_agents(agent_ids, neighbours_lists, info_sources, trustiness,
                                                neighbours=neighbours[username],
                                                trustiness=trustiness[agent_id],
                                                information_source=info_sources.get(agent_id, None),
-                                               # agent_username_to_id=agent_username_to_id,
                                                trust_change_callback=trust_change_callback,
                                                semantic_analyser=sem_anal)
     return agents
