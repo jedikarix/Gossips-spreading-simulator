@@ -24,7 +24,7 @@ def plot_graph(simulation_graph: SimulationGraph, label_font_size=7, label_posit
 
     trustiness_map = simulation_graph.get_trustiness_map()
     node_cmap =["#%02X%02X%02X" % (round(255*(1 - trustiness)), round(255*trustiness), 0) for node, trustiness in trustiness_map.items()]
-    pos = nx.shell_layout(simulation_graph)
+    pos = nx.kamada_kawai_layout(simulation_graph)
     nx.draw(simulation_graph, pos, with_labels=True, font_weight='bold')
     nx.draw_networkx_nodes(simulation_graph, pos=pos, node_color=node_cmap, with_labels=True)
     edge_labels = dict([((u, v,), round(d.get('trust', 0), float_precision))
