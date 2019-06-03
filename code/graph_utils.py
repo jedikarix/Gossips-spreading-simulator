@@ -27,9 +27,9 @@ def plot_graph(simulation_graph: SimulationGraph, label_font_size=7, label_posit
     pos = nx.shell_layout(simulation_graph)
     nx.draw(simulation_graph, pos, with_labels=True, font_weight='bold')
     nx.draw_networkx_nodes(simulation_graph, pos=pos, node_color=node_cmap, with_labels=True)
-    edge_labels = dict([((u, v,), round(d['trust'], float_precision))
+    edge_labels = dict([((u, v,), round(d.get('trust', 0), float_precision))
                         for u, v, d in simulation_graph.edges(data=True)])
-    labels_colors = dict([((u, v,), gen_color(d['trust']))
+    labels_colors = dict([((u, v,), gen_color(d.get('trust', 0)))
                           for u, v, d in simulation_graph.edges(data=True)])
     for edge, label in edge_labels.items():
         # manual loop is necessary as font_color can take only one arg
