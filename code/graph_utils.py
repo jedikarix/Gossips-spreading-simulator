@@ -58,6 +58,8 @@ def plot_graph_live(simulation_graph: SimulationGraph, refresh_period_s: float, 
         plt.draw()
         plt.pause(0.001)
         sleep(refresh_period_s)
+        if not plt.fignum_exists(1):
+            break
         plt.clf()
 
 
