@@ -9,6 +9,8 @@
 \usepackage{indentfirst}
 \usepackage{hyperref}
 \usepackage{todonotes}
+\usepackage{listings}
+\usepackage{tabulary}
 \hypersetup{
     colorlinks=true,
     linkcolor=blue,
@@ -93,8 +95,12 @@
 
 	Plik z logami jest utrzymany w formacie JSON. Dzięki temu po zakończonej symulacji można w prosty sposób odtworzyć tok symulacji i np. wyłuskać ewolucję informacji w kolejnych przesłaniach w sieci.
 	\subsection{Model porównywania zdań}
-	Każdy z agentów ma do dyspozycji globalny model dokonujący porównania semantycznego zdań. Jest on potrzebny do zweryfikowania otrzymanej przez agenta informacji z jego wiedzą. \todo{Opisać bardziej strukturę modelu, z jakich części się składa, co daje na wyjściu}
-	
+	Każdy z agentów ma do dyspozycji globalny model dokonujący porównania semantycznego zdań. Jest on potrzebny do zweryfikowania otrzymanej przez agenta informacji z jego wiedzą. Składa on się z dwóch głównych części:
+	\begin{itemize}
+		\item \href{https://github.com/Maluuba/gensen}{GenSen} - narzędzie służące do wektoryzacji zdań. Opiera się na wektoryzacji słów (narzędzie Glove) oraz rekurencyjnej sieci neuronowej. Implementacja została dostosowana w trakcie projektu do Pythona w wersji 3.
+		\item \href{https://github.com/facebookresearch/SentEval}{SentEval} - w ramach projektu został wytrenowany oraz dostosowany model do benchmarku SNLI. Model ten jest klasyfikatorem, określającym czy relacja między parą zdań jest semantycznie tożsamością, sprzecznością, czy są one niezależne. Jako wynik dla zdań A i B w projekcie brana jest średnia wyjść dla (A, B) oraz (B, A) aby zapewnić symetryczność relacji, ponadto wykrywana jest sytuacja kiedy A $\equiv$ B.
+	\end{itemize}
+
 	\section{Kwestie techniczne}
 	\subsection{Opis działania}
 	Wynikiem pracy nad projektem jest stworzenie modułu w języku Python, który zawiera funkcje i obiekty potrzebne do przeprowadzenia symulacji. Symulacja inicjalizowana jest na podstawie grafu (klasa {\tt SimulationGraph}). Do grafu mogą być dodawane nowe agenty. Agentom można przypisać źródła danych ({\tt InformationSource}). Między agentami w grafie można tworzyć połączenia wraz z określeniem początkowego zaufania między agentami. 
@@ -118,41 +124,33 @@
 	
 	Logi w systemie są zbierane za pomocą biblioteki \href{https://docs.python.org/3/library/logging.html#module-logging}{logging}.
 	
-	\section{Przykładowe eksperymenty}
-	\todo{Zaktualizować informacje o eksperymentach}
-	Zaproponowany kształt symulacji umożliwia zbadanie wielu interesujacych zjawisk. Poniżej opisane zostały propozycje eksperymentów.
-	\begin{itemize}
-	\item Badanie w jaki sposób rozpowszechnianie fałszywych plotek przez pojedynczego agenta wpłynie na zaufanie do niego.
-	\item Kształtowanie zaufania między grupami agentów korzystających z tego samego lub różnych źródeł informacji.
-	\item Badanie pojawiania się w sieci sprzecznych informacji mimo korzystania z tego samego źródła danych w zależności od parametrów mutacji plotek.
-	\item Porównanie kształtowania zaufania w sieci z włączonym i wyłączonym mechanizmem modyfikowania plotek.
-	\end{itemize}
-	\section{Zadania}
-	\begin{itemize}
-	\item Pobieranie danych z różnych serwisów informacyjnych
-	\item Graf
-		\begin{itemize}
-		\item Generowanie grafu agentów
-		\item Implementacja komunikacji między agentami
-		\item System raportowania przesyłanych plotek
-		\item Uruchamianie eksperymentów z zadanymi parametrami
-		\end{itemize}
-	\item Agent
-		\begin{itemize}
-		\item Implementacja mechanizmu zaufania
-		\item Wytrenowanie modelu oceny powiązania informacji
-		\end{itemize}
-	\item Plotka
-		\begin{itemize}
-		\item Stworzenie struktury plotki wraz z metadanymi
-		\item Losowa modyfikacja plotek
-		\end{itemize}
-	\item Logowanie
-		\begin{itemize}
-		\item System zbierania i opracowywania logów od poszczególnych agentów
-		\end{itemize}
-	\end{itemize}
-	
+	\section{Przeprowadzone eksperymenty}
+	Na przygotowanej implementacji przeprowadzony został szereg eksperymentów, opisanych w tablicy \ref{table:experiments}. Uruchomienie tych eksperymentów umożliwia skrypt \lstinline{run.py} z id eksperymentu jako argumentem uruchomienia.
+	\begin{table}
+		\caption{Wykaz przeprowadzonych eksperymentów}
+		\label{table:experiments}
+		\begin{tabulary}{\linewidth}{|l|L|L|L|}
+			\hline
+			\bfseries{Id} & \bfseries{Stuktura grafu} & \bfseries{Źródła informacji} & \bfseries{Obserwacje} \\
+			\hline
+			1 & $K_3$ & Wierzchołek 1. i 2. - wzajemnie sprzeczne. Wierzchołek 3. -  niezależna & Informacje sprzeczne przestają być wymieniane z powodu zdecydowanej przewagi zaufania do informacji neutralnej \\
+			\hline
+			2 & $K_3$ & Wierzchołek 1. i 2. - wzajemnie sprzeczne. Wierzchołek 3. -  brak & Jedna z informacji zostaje szybko utracona \\
+			\hline
+			3 & $K_3$ & Wierzchołek 1. i 3. - wzajemnie sprzeczne. Wierzchołek 2. -  ta sama co 1. & Wierzchołek 3. zostaje zdominowany przez pozostałe 2 \\
+			\hline
+			4 & 3 grupy $K_4$, 2 połączenia miedzy każdą parą grup & Grupy 1. i 2. - wzajemnie sprzeczne. Grupa 3. - niezależna & Szybka budowa zaufania wewnątrz grup, powolna pomiędzy grupą 3. a 1. i 2., brak zaufania między grupami 1. i 2.\\
+			\hline
+			5 & 3 grupy $K_4$, 2 połączenia miedzy każdą parą grup & Grupy 1. i 2. - wzajemnie sprzeczne. Grupa 3. -  brak & Szybka budowa zaufania między członkami grup 1. i 2., w grupie 3. ostatecznie jedna z informacji wypiera drugą, następnie następuje budowa zaufania z grupą z której ta informacja pochodzi\\
+			\hline
+			6 & 2 grupy $K_4$, 2 połączenia miedzy grupami & Wzajemnie sprzeczne między grupami & Szybka budowa zaufania wewnątrz grup, brak zaufania pomiedzy\\
+			\hline
+			7 & Grupa $K_4$ i grupa $K_8$, 2 połączenia pomiedzy & Wzajemnie sprzeczne między grupami & Wynik zbliżony do ekseprymentu 5. \\
+			\hline
+			8 & 2 grupy $K_4$ i pojedynczy wierzchołek z 2 połączeniami do każdej z obu grup & Szybki wzrost zaufania wewnątrz grup, wierzchołek łączący osiąga ostatecznie zaufanie w poniżej 0 & \\
+			\hline
+		\end{tabulary}
+	\end{table}
 	\section{Podsumowanie}
 	\todo{Podsumowanie - opisać jak wyszła symulacja, jakie były problemy (np. słaby model), podsumować krótko eksperymenty}
 \end{document}
