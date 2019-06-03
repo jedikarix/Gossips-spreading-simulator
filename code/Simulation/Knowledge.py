@@ -52,7 +52,7 @@ class Knowledge:
                 if most_entailed.last_sender:
                     self.add_agent_trust(most_entailed.last_sender, -info_trust)
                 if most_entailed.trust < 0:  # we lost trust to the previous message
-                    new_info = KnowledgeInformation(message.body, sender, -most_entailed.trust, information_id)
+                    new_info = KnowledgeInformation(message.body, -most_entailed.trust, information_id, sender)
                     self.informations[self.informations.index(most_entailed)] = new_info  # replace
                 return
 
