@@ -1,5 +1,4 @@
 from Simulation.initialize_simulation import *
-from Simulation.initialize_logger import initialize_logger
 from graph_utils import *
 from Simulation.InformationSource import *
 from Generation.graphs_generation import *
@@ -50,6 +49,27 @@ def get_test_graph(test_id):
         graph.add_bidirectional_edge(choice(group_pred_info_1), e[0], 0)
         graph.add_bidirectional_edge(choice(group_pred_info_2), e[0], 0)
         graph.add_bidirectional_edge(choice(group_pred_info_2), e[0], 0)
+
+    if test_id == "9":
+
+        source = OnlineInformationSource('https://www.foxnews.com/', articles_limit=50)
+        graph = connected_gnp_graph(30, 0.4)
+        graph.set_information_source(1, source)
+        graph.set_information_source(2, source)
+        graph.set_information_source(3, source)
+
+    if test_id == "10":
+        source = OnlineInformationSource('https://www.foxnews.com/', articles_limit=50)
+        graph = connected_gnp_graph(30, 0.4)
+        for i in range(30):
+            graph.set_information_source(i, source)
+
+    if test_id == "11":
+        source = OnlineInformationSource('https://www.foxnews.com/', articles_limit=50)
+        source2 = OnlineInformationSource('https://www.cnn.com/', articles_limit=50)
+        graph = connected_gnp_graph(30, 0.4)
+        for i in range(30):
+            graph.set_information_source(i, source if i % 2 == 0 else source2)
 
     for g in group_pred_info_1:
         graph.set_information_source(g, PredefinedInformationSource('..\\data\\sentence.txt'))
