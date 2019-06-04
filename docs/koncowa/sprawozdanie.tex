@@ -125,7 +125,7 @@
 	Logi w systemie są zbierane za pomocą biblioteki \href{https://docs.python.org/3/library/logging.html#module-logging}{logging}.
 	
 	\section{Przeprowadzone eksperymenty}
-	Na przygotowanej implementacji przeprowadzony został szereg eksperymentów, opisanych w tablicy \ref{table:experiments}. Uruchomienie tych eksperymentów umożliwia skrypt \lstinline{run.py} z id eksperymentu jako argumentem uruchomienia.
+	Na przygotowanej implementacji przeprowadzony został szereg eksperymentów, opisanych w tablicy \ref{table:experiments}. Uruchomienie tych eksperymentów umożliwia skrypt \lstinline{run.py}{} z id eksperymentu jako argumentem uruchomienia.
 	\begin{table}
 		\caption{Wykaz przeprowadzonych eksperymentów}
 		\label{table:experiments}
@@ -148,6 +148,19 @@
 			7 & Grupa $K_4$ i grupa $K_8$, 2 połączenia pomiedzy & Wzajemnie sprzeczne między grupami & Wynik zbliżony do ekseprymentu 5. \\
 			\hline
 			8 & 2 grupy $K_4$ i pojedynczy wierzchołek z 2 połączeniami do każdej z obu grup & Szybki wzrost zaufania wewnątrz grup, wierzchołek łączący osiąga ostatecznie zaufanie w poniżej 0 & \\
+			\hline
+		\end{tabulary}
+	\end{table}
+	\begin{table}
+		\caption{Wykaz przeprowadzonych eksperymentów}
+		\label{table:experiments2}
+		\begin{tabulary}{\linewidth}{|l|L|L|L|}
+			\hline
+			9 & losowy graf o 30 wierzchołkach i wypełnieniu 0.4. & Do trzech agentów przypisane źródło informacji z serwisu informacyjnego. & Stopniowo zaufanie między agentami w sieci rośnie. Pojawiają się jedynie nieliczne pary agentów z negatywnym zaufaniem. \\
+			\hline
+			10 & losowy graf o 30 wierzchołkach i wypełnieniu 0.4. & Każdemu z agentów zostaje przypisane źródło informacji z serwisu informacyjnego. & W porównaniu do eksperymentu 9. pojawia się o wiele więcej par agentów, którzy sobie nie ufają. Pojawiają się także agenty, którym nie ufa większość sąsiadów. \\
+			\hline
+			11 & losowy graf o 30 wierzchołkach i wypełnieniu 0.4. & Połowie agentów przypisano źródło A, drugiej połowie B. Oba źródła opierają się o różne serwisy informacyjne. & Brak widocznych różnic w porównaniu z wynikami eksperymentu 10. \\
 			\hline
 		\end{tabulary}
 	\end{table}
