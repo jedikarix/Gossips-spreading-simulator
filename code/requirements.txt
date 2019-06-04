@@ -2,6 +2,7 @@ networkx
 spade
 nltk
 torch
+newspaper3k
 scikit-learn
 h5py
 numpy
