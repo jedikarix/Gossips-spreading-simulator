@@ -4,6 +4,7 @@ from Simulation.InformationSource import *
 from Generation.graphs_generation import *
 
 import sys
+import os
 
 
 def get_test_graph(test_id):
@@ -72,11 +73,14 @@ def get_test_graph(test_id):
             graph.set_information_source(i, source if i % 2 == 0 else source2)
 
     for g in group_pred_info_1:
-        graph.set_information_source(g, PredefinedInformationSource('..\\data\\sentence.txt'))
+        graph.set_information_source(g, PredefinedInformationSource(
+            os.path.join(os.path.dirname(__file__), '..', 'data', 'sentence.txt')))
     for g in group_pred_info_2:
-        graph.set_information_source(g, PredefinedInformationSource('..\\data\\opposite.txt'))
+        graph.set_information_source(g, PredefinedInformationSource(
+            os.path.join(os.path.dirname(__file__), '..', 'data', 'opposite.txt')))
     for g in group_pred_info_neutral:
-        graph.set_information_source(g, PredefinedInformationSource('..\\data\\neutral.txt'))
+        graph.set_information_source(g, PredefinedInformationSource(
+            os.path.join(os.path.dirname(__file__), '..', 'data', 'neutral.txt')))
 
     return graph
 
